@@ -1,5 +1,66 @@
 [
   {
+    "id": "bidder-user-1790188647474",
+    "name": "AP INDUSTRIES",
+    "declaredAddress": "Not Provided",
+    "gst": "Not Extracted / Missing",
+    "pan": "Not Extracted / Missing",
+    "udyam": "Not Extracted / Missing",
+    "mca": "Not Extracted / Missing",
+    "package": "Tender #S26-104 (Valves & Piping)",
+    "demoType": "Live Uploaded Verification",
+    "typeDescription": "Processed from actual uploaded user documents (Multi-Stage Mock Registry Check)",
+    "score": 10,
+    "risk": "High",
+    "status": "Flagged",
+    "docs": 1,
+    "matrix": {
+      "gst": {
+        "status": "MISSING",
+        "label": "GSTN Registration Check",
+        "evidence": "Extracted: NONE | Format: MISSING | MOCK GST Registry: NOT QUERIED | Final: MISSING"
+      },
+      "pan": {
+        "status": "MISSING",
+        "label": "PAN Identity Check",
+        "evidence": "Extracted: NONE | Format: MISSING | MOCK PAN Registry: NOT QUERIED | Final: MISSING"
+      },
+      "udyam": {
+        "status": "MISSING",
+        "label": "Udyam MSME Registry",
+        "evidence": "Extracted: NONE | Format: MISSING | MOCK Udyam Registry: NOT QUERIED | Final: MISSING"
+      },
+      "mca": {
+        "status": "MISSING",
+        "label": "MCA21 Company Status",
+        "evidence": "Extracted: NONE | Format: MISSING | Mock MCA21 Registry: NO CIN EXTRACTED (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: MISSING"
+      },
+      "documents": {
+        "status": "FAIL",
+        "label": "Statutory Document Suite",
+        "evidence": "Document package contains no identifiable statutory registrations, PAN, GSTIN, or tender references."
+      }
+    },
+    "findings": [
+      "No statutory or procurement information found in uploaded documents"
+    ],
+    "flags": [
+      "No statutory or procurement information found in uploaded documents"
+    ],
+    "audit": [
+      {
+        "action": "Multi-Stage Document Verification Completed",
+        "timestamp": "Just now",
+        "user": "System (Multi-Stage Mock Engine)"
+      },
+      {
+        "action": "Package Uploaded by Vendor",
+        "timestamp": "Just now",
+        "user": "Vendor Portal"
+      }
+    ]
+  },
+  {
     "id": "bidder-1",
     "name": "Aarav Industrial Solutions Pvt. Ltd.",
     "gst": "27AAQCA1234F1ZP",

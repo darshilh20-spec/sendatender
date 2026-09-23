@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SendaTender | SIH 26100 GeM Compliance Workbench</title>
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Early theme initialization to avoid white flash
+    (function() {
+      const saved = localStorage.getItem('sendatender-theme') || 'light';
+      if (saved === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('dark-mode'));
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="app-shell">
@@ -12,21 +22,21 @@
       <div class="brand"><div class="brand-mark senda-logo">ST</div><span>Senda<span>Tender</span></span></div>
       <p class="sih">SIH 2026 · PS 26100</p>
       <nav id="nav">
-        <button data-view="home" class="active"><i>⌂</i> Overview</button>
-        <button data-view="vendor"><i>↑</i> Vendor Portal</button>
-        <button data-view="officer"><i>♙</i> Officer Portal</button>
+        <button data-view="home" class="active"><i>⌂</i> <span data-i18n="navOverview">Overview</span></button>
+        <button data-view="vendor"><i>↑</i> <span data-i18n="navVendor">Vendor Portal</span></button>
+        <button data-view="officer"><i>♙</i> <span data-i18n="navOfficer">Officer Portal</span></button>
       </nav>
       <div class="sidebar-note">
-        <b>Demo Mode Active</b><br>
-        Full mock Gemini OCR and live mock government checks (GSTN, PAN, Udyam, MCA21, CVC) connected.
+        <b data-i18n="sidebarNoteTitle">Demo Mode Active</b><br>
+        <span data-i18n="sidebarNoteDesc">Full mock Gemini OCR and live mock government checks (GSTN, PAN, Udyam, MCA21, CVC) connected.</span>
       </div>
     </aside>
     <main>
       <header>
         <button class="menu" id="menu">☰</button>
         <div>
-          <span class="eyebrow">PROCUREMENT DOCUMENT REVIEW</span>
-          <h1 id="page-title">Tender compliance workspace</h1>
+          <span class="eyebrow" data-i18n="headerEyebrow">PROCUREMENT DOCUMENT REVIEW</span>
+          <h1 id="page-title" data-i18n="headerTitleHome">Tender compliance workspace</h1>
         </div>
         <div class="profile">
           <select id="language" aria-label="Language">
@@ -43,12 +53,12 @@
       <section class="view active" id="home">
         <div class="hero">
           <div>
-            <span class="pill blue">SIH 2026 · Problem Statement 26100</span>
-            <h2>Review tender documents<br>in one unified workbench.</h2>
-            <p>SendaTender automates statutory verification across the Ministry of Petroleum & Natural Gas and GeM. It extracts, cross-checks GSTN, PAN, Udyam, MCA21, evaluates CVC debarments, produces audit-ready compliance dossiers, and outputs signed PDF reports.</p>
+            <span class="pill blue" data-i18n="heroPill">SIH 2026 · Problem Statement 26100</span>
+            <h2 data-i18n="heroTitle">Review tender documents<br>in one unified workbench.</h2>
+            <p data-i18n="heroDesc">SendaTender automates statutory verification across the Ministry of Petroleum & Natural Gas and GeM. It extracts, cross-checks GSTN, PAN, Udyam, MCA21, evaluates CVC debarments, produces audit-ready compliance dossiers, and outputs signed PDF reports.</p>
             <div class="hero-actions">
-              <button class="primary" data-go="vendor">Upload package <b>→</b></button>
-              <button class="secondary" data-go="officer">Open officer desk</button>
+              <button class="primary" data-go="vendor" data-i18n="heroBtnUpload">Upload package <b>→</b></button>
+              <button class="secondary" data-go="officer" data-i18n="heroBtnOfficer">Open officer desk</button>
             </div>
           </div>
           <div class="hero-image">
@@ -56,25 +66,25 @@
           </div>
         </div>
         <div class="stats">
-          <article><span>ACTIVE BIDDERS</span><b id="stat-bidders">5</b><small>Demo archetypes loaded</small></article>
-          <article><span>AVG. COMPLIANCE</span><b id="stat-score">65%</b><small>Across active bidders</small></article>
-          <article><span>READY TO REVIEW</span><b id="stat-review">3</b><small>Awaiting officer decision</small></article>
+          <article><span><span data-i18n="statBidders">ACTIVE BIDDERS</span></span><b id="stat-bidders">5</b><small data-i18n="statBiddersSub">Demo archetypes loaded</small></article>
+          <article><span><span data-i18n="statScore">AVG. COMPLIANCE</span></span><b id="stat-score">65%</b><small data-i18n="statScoreSub">Across active bidders</small></article>
+          <article><span><span data-i18n="statReview">READY TO REVIEW</span></span><b id="stat-review">3</b><small data-i18n="statReviewSub">Awaiting officer decision</small></article>
         </div>
         <div class="feature-grid">
           <article>
             <div class="icon blue-bg">1</div>
-            <h3>Vendor submission</h3>
-            <p>Upload NIT/RFP, BOQ, GST, PAN, Udyam, ITR, bank proof, and technical proposals in one package.</p>
+            <h3 data-i18n="feature1Title">Vendor submission</h3>
+            <p data-i18n="feature1Desc">Upload NIT/RFP, BOQ, GST, PAN, Udyam, ITR, bank proof, and technical proposals in one package.</p>
           </article>
           <article>
             <div class="icon mint-bg">2</div>
-            <h3>Automated screening</h3>
-            <p>AI extracts metadata, maps compliance to the statutory matrix (PASS/FAIL/REVIEW/MISSING), and flags discrepancies.</p>
+            <h3 data-i18n="feature2Title">Automated screening</h3>
+            <p data-i18n="feature2Desc">AI extracts metadata, maps compliance to the statutory matrix (PASS/FAIL/REVIEW/MISSING), and flags discrepancies.</p>
           </article>
           <article>
             <div class="icon orange-bg">3</div>
-            <h3>Officer decision & audit</h3>
-            <p>Officers inspect statutory evidence, explainable scoring rationale, record decisions (Approve, Request More, Flag), and export PDF reports.</p>
+            <h3 data-i18n="feature3Title">Officer decision & audit</h3>
+            <p data-i18n="feature3Desc">Officers inspect statutory evidence, explainable scoring rationale, record decisions (Approve, Request More, Flag), and export PDF reports.</p>
           </article>
         </div>
       </section>
@@ -83,54 +93,54 @@
       <section class="view" id="vendor">
         <div class="section-heading">
           <div>
-            <span class="eyebrow">VENDOR PORTAL</span>
-            <h2>Submit your tender & vendor package</h2>
-            <p>Upload tender and vendor compliance documents together or add each file individually.</p>
+            <span class="eyebrow" data-i18n="vendorEyebrow">VENDOR PORTAL</span>
+            <h2 data-i18n="vendorHeading">Submit your tender & vendor package</h2>
+            <p data-i18n="vendorSubheading">Upload tender and vendor compliance documents together or add each file individually.</p>
           </div>
-          <span class="pill amber">Demo Mode · Gemini Mock Engine</span>
+          <span class="pill amber" data-i18n="vendorPill">Demo Mode · Gemini Mock Engine</span>
         </div>
         <div class="steps">
-          <span class="done">1 <b>Upload</b></span><i></i>
-          <span id="step2">2 <b>Verify</b></span><i></i>
-          <span id="step3">3 <b>Ready for review</b></span>
+          <span class="done">1 <b data-i18n="step1">Upload</b></span><i></i>
+          <span id="step2">2 <b data-i18n="step2">Verify</b></span><i></i>
+          <span id="step3">3 <b data-i18n="step3">Ready for review</b></span>
         </div>
         <div class="upload-layout">
           <div class="upload-main">
             <div class="upload-guide">
-              <b>Statutory Checklist</b>
-              <span><strong>1. Tender documents</strong> — NIT/RFP, tender notice, specifications, BOQ</span>
-              <span><strong>2. Vendor documents</strong> — GST, PAN, Udyam/MSME, ITR, bank proof, technical proposal</span>
+              <b data-i18n="statutoryChecklist">Statutory Checklist</b>
+              <span data-i18n="checklistTender"><strong>1. Tender documents</strong> — NIT/RFP, tender notice, specifications, BOQ</span>
+              <span data-i18n="checklistVendor"><strong>2. Vendor documents</strong> — GST, PAN, Udyam/MSME, ITR, bank proof, technical proposal</span>
             </div>
 
             <!-- VENDOR SUBMISSION PROFILE (SIH DEMO) -->
-            <div class="vendor-profile-form" style="background:#fff; border:1px solid #dce8ed; border-radius:10px; padding:16px; margin-bottom:14px;">
+            <div class="vendor-profile-form">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <h3 style="margin:0; font-size:14px; color:#0f172a;">Vendor Profile & Statutory Declaration</h3>
-                <span style="font-size:10px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:10px;">Optional Declaration</span>
+                <h3 data-i18n="profileCardTitle">Vendor Profile & Statutory Declaration</h3>
+                <span data-i18n="profileCardTag" style="font-size:10px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:10px;">Optional Declaration</span>
               </div>
-              <p style="font-size:11px; color:#64748b; margin:0 0 12px; line-height:1.4;">
+              <p data-i18n="profileCardDesc" style="font-size:11px; margin:0 0 12px; line-height:1.4;">
                 Enter declared entity details to cross-validate against uploaded documents. If left blank, the system automatically extracts them.
               </p>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div>
-                  <label for="vendor-profile-name" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">Legal Entity Name</label>
-                  <input id="vendor-profile-name" type="text" placeholder="e.g. Aarav Industrial Solutions Pvt. Ltd." style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                  <label for="vendor-profile-name" data-i18n="labelEntityName">Legal Entity Name</label>
+                  <input id="vendor-profile-name" type="text" placeholder="e.g. Aarav Industrial Solutions Pvt. Ltd." />
                 </div>
                 <div>
-                  <label for="vendor-profile-gst" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">GSTIN <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
-                  <input id="vendor-profile-gst" type="text" placeholder="e.g. 27AAQCA1234F1ZP" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                  <label for="vendor-profile-gst" data-i18n="labelGstin">GSTIN <small>(optional)</small></label>
+                  <input id="vendor-profile-gst" type="text" placeholder="e.g. 27AAQCA1234F1ZP" />
                 </div>
                 <div>
-                  <label for="vendor-profile-pan" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">PAN <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
-                  <input id="vendor-profile-pan" type="text" placeholder="e.g. AAQCA1234F" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                  <label for="vendor-profile-pan" data-i18n="labelPan">PAN <small>(optional)</small></label>
+                  <input id="vendor-profile-pan" type="text" placeholder="e.g. AAQCA1234F" />
                 </div>
                 <div>
-                  <label for="vendor-profile-udyam" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">Udyam Number <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
-                  <input id="vendor-profile-udyam" type="text" placeholder="e.g. UDYAM-MH-01-0012345" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                  <label for="vendor-profile-udyam" data-i18n="labelUdyam">Udyam Number <small>(optional)</small></label>
+                  <input id="vendor-profile-udyam" type="text" placeholder="e.g. UDYAM-MH-01-0012345" />
                 </div>
                 <div style="grid-column:1 / -1;">
-                  <label for="vendor-profile-address" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">Registered Business Address <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
-                  <input id="vendor-profile-address" type="text" placeholder="e.g. Plot 42, MIDC Industrial Area, Andheri East, Mumbai 400093" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                  <label for="vendor-profile-address" data-i18n="labelAddress">Registered Business Address <small>(optional)</small></label>
+                  <input id="vendor-profile-address" type="text" placeholder="e.g. Plot 42, MIDC Industrial Area, Andheri East, Mumbai 400093" />
                 </div>
               </div>
             </div>
@@ -138,15 +148,15 @@
             <div id="dropzone" class="dropzone">
               <input id="bulk-input" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
               <div class="upload-icon">↑</div>
-              <h3>Upload tender & vendor documents</h3>
-              <p>Select the complete package in one go, or <label for="bulk-input">browse files</label></p>
-              <small>PDF, JPG, PNG, DOC · Max 20 files · Express backend processing</small>
+              <h3 data-i18n="dropzoneTitle">Upload tender & vendor documents</h3>
+              <p><span data-i18n="dropzoneDesc">Select the complete package in one go, or</span> <label for="bulk-input">browse files</label></p>
+              <small data-i18n="dropzoneSmall">PDF, JPG, PNG, DOC · Max 20 files · Express backend processing</small>
             </div>
-            <div class="or"><span>OR</span></div>
+            <div class="or"><span data-i18n="orText">OR</span></div>
             <div class="individual">
               <div>
-                <h3>Add an individual document</h3>
-                <p>Choose document type, then select its file.</p>
+                <h3 data-i18n="singleDocTitle">Add an individual document</h3>
+                <p data-i18n="singleDocDesc">Choose document type, then select its file.</p>
               </div>
               <select id="doc-type">
                 <option value="Auto-detect">Auto-detect document type</option>
@@ -160,19 +170,19 @@
                 <option>MSME Certificate</option>
                 <option>Technical Proposal</option>
               </select>
-              <label class="outline-button">Choose file<input id="single-input" type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" hidden></label>
+              <label class="outline-button"><span data-i18n="chooseFileBtn">Choose file</span><input id="single-input" type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" hidden></label>
             </div>
           </div>
           <div class="documents-card">
             <div class="card-top">
               <div>
-                <h3>Your documents <span id="file-count">0 files</span></h3>
-                <p>Gemini OCR & Statutory Matrix verification</p>
+                <h3><span data-i18n="docsCardTitle">Your documents</span> <span id="file-count">0 files</span></h3>
+                <p data-i18n="docsCardSub">Gemini OCR & Statutory Matrix verification</p>
               </div>
-              <button id="verify" class="primary" disabled>Start AI verification <b>→</b></button>
+              <button id="verify" class="primary" disabled><span data-i18n="startVerifyBtn">Start AI verification →</span></button>
             </div>
             <div id="file-list" class="file-list">
-              <div class="empty">Your uploaded documents will appear here.</div>
+              <div class="empty" data-i18n="emptyDocs">Your uploaded documents will appear here.</div>
             </div>
           </div>
         </div>
@@ -183,29 +193,29 @@
       <section class="view" id="officer">
         <div class="section-heading">
           <div>
-            <span class="eyebrow">OFFICER PORTAL</span>
-            <h2>Bidder review desk & compliance audit</h2>
-            <p>Review compliance matrices, explainable scores, statutory evidence, and take decisions.</p>
+            <span class="eyebrow" data-i18n="officerEyebrow">OFFICER PORTAL</span>
+            <h2 data-i18n="officerHeading">Bidder review desk & compliance audit</h2>
+            <p data-i18n="officerSubheading">Review compliance matrices, explainable scores, statutory evidence, and take decisions.</p>
           </div>
           <div style="display:flex; gap:10px;">
-            <button id="seed" class="secondary">Reset demo data</button>
-            <button id="officer-logout" class="secondary" style="color:#b91c1c;">Lock / Log Out</button>
+            <button id="seed" class="secondary" data-i18n="resetDemoBtn">Reset demo data</button>
+            <button id="officer-logout" class="secondary" style="color:#b91c1c;" data-i18n="logoutBtn">Lock / Log Out</button>
           </div>
         </div>
         <div class="filters">
           <label class="search">⌕ <input id="search" placeholder="Search bidder, GSTIN or archetype…"></label>
           <select id="status-filter">
-            <option value="All">All statuses</option>
-            <option>Ready for review</option>
-            <option>Approved</option>
-            <option>Flagged</option>
-            <option>Needs review</option>
+            <option value="All" data-i18n="filterAllStatus">All statuses</option>
+            <option value="Ready for review" data-i18n="statusReady">Ready for review</option>
+            <option value="Approved" data-i18n="statusApproved">Approved</option>
+            <option value="Flagged" data-i18n="statusFlagged">Flagged</option>
+            <option value="Needs review" data-i18n="statusNeedsReview">Needs review</option>
           </select>
           <select id="risk-filter">
-            <option value="All">All risk levels</option>
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
+            <option value="All" data-i18n="filterAllRisk">All risk levels</option>
+            <option value="Low" data-i18n="riskLow">Low</option>
+            <option value="Medium" data-i18n="riskMedium">Medium</option>
+            <option value="High" data-i18n="riskHigh">High</option>
           </select>
         </div>
         <div class="officer-layout">
@@ -213,18 +223,18 @@
             <table>
               <thead>
                 <tr>
-                  <th>BIDDER / ARCHETYPE</th>
-                  <th>PACKAGE</th>
-                  <th>COMPLIANCE</th>
-                  <th>RISK</th>
-                  <th>STATUS</th>
+                  <th data-i18n="thBidder">BIDDER / ARCHETYPE</th>
+                  <th data-i18n="thPackage">PACKAGE</th>
+                  <th data-i18n="thCompliance">COMPLIANCE</th>
+                  <th data-i18n="thRisk">RISK</th>
+                  <th data-i18n="thStatus">STATUS</th>
                 </tr>
               </thead>
               <tbody id="bidder-list"></tbody>
             </table>
           </div>
           <aside class="review-panel" id="review-panel">
-            <div class="empty">Select a bidder to view the verification record.</div>
+            <div class="empty" data-i18n="emptyReviewPanel">Select a bidder to view the verification record.</div>
           </aside>
         </div>
       </section>
@@ -235,24 +245,24 @@
   <div id="officer-modal" class="modal-overlay hidden">
     <div class="login-card">
       <div class="login-icon">🔒</div>
-      <span class="eyebrow" style="color:#0369a1;">RESTRICTED PROCUREMENT ACCESS</span>
-      <h2>Officer Portal Verification</h2>
-      <p>Enter your designated officer credentials to access confidential bidder dossiers, statutory evaluations, and decision logging.</p>
+      <span class="eyebrow" style="color:#0369a1;" data-i18n="modalEyebrow">RESTRICTED PROCUREMENT ACCESS</span>
+      <h2 data-i18n="modalTitle">Officer Portal Verification</h2>
+      <p data-i18n="modalDesc">Enter your designated officer credentials to access confidential bidder dossiers, statutory evaluations, and decision logging.</p>
 
-      <div id="login-error" class="login-error">Invalid officer credentials. Access denied.</div>
+      <div id="login-error" class="login-error" data-i18n="loginError">Invalid officer credentials. Access denied.</div>
 
       <form id="officer-form" onsubmit="event.preventDefault(); handleOfficerLogin();">
         <div class="login-field">
-          <label for="officer-id">Officer ID</label>
+          <label for="officer-id" data-i18n="labelOfficerId">Officer ID</label>
           <input id="officer-id" type="text" placeholder="e.g. OFFICER2026" autocomplete="username" required />
         </div>
         <div class="login-field">
-          <label for="officer-pass">Password</label>
+          <label for="officer-pass" data-i18n="labelOfficerPass">Password</label>
           <input id="officer-pass" type="password" placeholder="••••••••" autocomplete="current-password" required />
         </div>
         <div class="login-actions">
-          <button type="button" class="secondary" onclick="closeOfficerModal()">Cancel</button>
-          <button type="submit" class="primary" id="btn-login-submit">Login →</button>
+          <button type="button" class="secondary" onclick="closeOfficerModal()" data-i18n="btnCancel">Cancel</button>
+          <button type="submit" class="primary" id="btn-login-submit" data-i18n="btnLogin">Login →</button>
         </div>
       </form>
     </div>
@@ -261,19 +271,5 @@
   <div id="toast" class="toast"></div>
 
   <script src="app.js"></script>
-  <script>
-    // Theme & language handling
-    const themeButton = document.getElementById('theme-toggle');
-    const languageMenu = document.getElementById('language');
-    function setTheme(mode) {
-      document.body.classList.toggle('dark-mode', mode === 'dark');
-      if (themeButton) themeButton.textContent = mode === 'dark' ? '☀' : '☾';
-      localStorage.setItem('sendatender-theme', mode);
-    }
-    setTheme(localStorage.getItem('sendatender-theme') || 'light');
-    if (themeButton) {
-      themeButton.onclick = () => setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
-    }
-  </script>
 </body>
 </html>
