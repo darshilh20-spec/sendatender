@@ -11,7 +11,7 @@
 .hero-image{flex:0 0 380px;max-width:380px;height:240px;border-radius:14px;overflow:hidden;background:#e9f4f7;border:1px solid #d4e3ea;box-shadow:0 12px 28px #1f3b4d14;display:flex;align-items:center;justify-content:center}
 .hero-image img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 
-.hero-card{width:350px;background:#fff;border:1px solid #dce8ed;border-radius:15px;padding:22px;box-shadow:0 18px 35px #31576e16;position:relative}.scan-line{height:2px;background:#58cbca;box-shadow:0 0 14px #58cbca;margin:-2px 0 20px}.doc-mini{display:flex;align-items:center;gap:10px}.doc-mini>span{background:#dcf6ee;color:#13a274;padding:7px;border-radius:50%;font-weight:bold}.doc-mini div{display:grid;gap:3px;flex:1}.doc-mini small{color:var(--muted)}.doc-mini em{font-style:normal;color:#14a779;font-size:22px;font-weight:800}.meter{margin:18px 0;height:7px;background:#edf1f4;border-radius:8px;overflow:hidden}.meter i{height:100%;display:block;background:linear-gradient(90deg,#22bd9d,#60d4b3);border-radius:8px}.checks{border-top:1px solid var(--line);padding-top:13px;display:grid;gap:7px;color:#55716c;font-size:12px}.checks span::first-letter{color:#15ae83}.stats,.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}.stats article,.feature-grid article,.documents-card,.upload-main,.table-card,.review-panel{background:#fff;border:1px solid var(--line);border-radius:13px}.stats article{padding:18px 20px}.stats span{font-size:10px;letter-spacing:1px;color:#81919d;font-weight:800}.stats b{display:block;font-size:28px;letter-spacing:-0.5px;margin:6px 0 2px}.stats small{color:#40a983;font-size:11px;font-weight:600}.feature-grid article{padding:22px}.feature-grid h3{margin:12px 0 6px;font-size:16px}.feature-grid p{color:var(--muted);line-height:1.5;margin:0;font-size:13px}.icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px}.blue-bg{background:#e8efff;color:#2b6cf0}.mint-bg{background:#e6f8f4;color:#12a984}.orange-bg{background:#fff1dc;color:#e58a1c}.section-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}.section-heading h2{font-size:26px;letter-spacing:-0.5px;margin:4px 0 6px}.section-heading p{color:var(--muted);margin-bottom:0;font-size:13px}.steps{display:flex;align-items:center;gap:12px;margin:18px 0 22px;color:#9aa6b1;font-size:12px;font-weight:700}.steps span{display:flex;gap:7px;align-items:center;width:24px;height:24px;border:1px solid #d5dde3;border-radius:50%;display:grid;place-items:center}.steps span b{position:relative;left:30px;white-space:nowrap;font-weight:700}.steps .done{background:var(--blue);border-color:var(--blue);color:#fff}.steps i{width:90px;height:1px;background:#dce3e8}.upload-layout{display:grid;grid-template-columns:1.35fr .85fr;gap:18px}.upload-main{padding:20px}
+.hero-card{width:350px;background:#fff;border:1px solid #dce8ed;border-radius:15px;padding:22px;box-shadow:0 18px 35px #31576e16;position:relative}.scan-line{height:2px;background:#58cbca;box-shadow:0 0 14px #58cbca;margin:-2px 0 20px}.doc-mini{display:flex;align-items:center;gap:10px}.doc-mini>span{background:#dcf6ee;color:#13a274;padding:7px;border-radius:50%;font-weight:bold}.doc-mini div{display:grid;gap:3px;flex:1}.doc-mini small{color:var(--muted)}.doc-mini em{font-style:normal;color:#14a779;font-size:22px;font-weight:800}.meter{margin:18px 0;height:7px;background:#edf1f4;border-radius:8px;overflow:hidden}.meter i{height:100%;display:block;background:linear-gradient(90deg,#22bd9d,#60d4b3);border-radius:8px}.checks{border-top:1px solid var(--line);padding-top:13px;display:grid;gap:7px;color:#55716c;font-size:12px}.checks span::first-letter{color:#15ae83}.stats,.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}.stats article,.feature-grid article,.documents-card,.upload-main,.table-card,.review-panel{background:#fff;border:1px solid var(--line);border-radius:13px}.stats article{padding:18px 20px}.stats span{font-size:10px;letter-spacing:1px;color:#81919d;font-weight:800}.stats b{display:block;font-size:28px;letter-spacing:-0.5px;margin:6px 0 2px}.stats small{color:#40a983;font-size:11px;font-weight:600}.feature-grid article{padding:22px}.feature-grid h3{margin:12px 0 6px;font-size:16px}.feature-grid p{color:var(--muted);line-height:1.5;margin:0;font-size:13px}.icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px}.blue-bg{background:#e8efff;color:#2b6cf0}.mint-bg{background:#e6f8f4;color:#12a984}.orange-bg{background:#fff1dc;color:#e58a1c}.section-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}.section-heading h2{font-size:26px;letter-spacing:-0.5px;margin:4px 0 6px}.section-heading p{color:var(--muted);margin-bottom:0;font-size:13px}.steps{display:flex;align-items:center;gap:12px;margin:18px 0 22px;color:#9aa6b1;font-size:12px;font-weight:700}.step-item{display:flex;align-items:center;gap:8px}.step-circle{width:24px;height:24px;border:1px solid #d5dde3;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;line-height:1;box-sizing:border-box;color:#64748b}.step-label{white-space:nowrap;font-weight:700}.step-circle.done{background:var(--blue);border-color:var(--blue);color:#fff}.steps i{width:90px;height:1px;background:#dce3e8;display:inline-block}.upload-layout{display:grid;grid-template-columns:1.35fr .85fr;gap:18px}.upload-main{padding:20px}
 .upload-guide{margin-bottom:14px;border-radius:9px;padding:12px 14px;background:#f4faf9;border:1px solid #d7eeea;display:grid;gap:5px;color:#58727b;font-size:11px;line-height:1.4}
 .upload-guide b{color:#177d70;font-size:11px;letter-spacing:.4px;text-transform:uppercase}
 .upload-guide strong{color:#2e4d5e}
@@ -476,5 +476,23 @@ body.dark-mode .toast {
   color: #f8fafc;
   border: 1px solid #334155;
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Steps in Dark Mode */
+body.dark-mode .steps {
+  color: #94a3b8;
+}
+body.dark-mode .step-circle {
+  border-color: #374151;
+  color: #94a3b8;
+  background: #111827;
+}
+body.dark-mode .step-circle.done {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+body.dark-mode .steps i {
+  background: #374151;
 }
 
