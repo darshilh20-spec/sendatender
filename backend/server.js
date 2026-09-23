@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const pdfParse = require('pdf-parse');
+const { verifyWithMockRegistry, MOCK_REGISTRY } = require('./mockGovChecks');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -234,17 +235,25 @@ function extractPdfStreamText(buffer) {
       streamBuf = Buffer.from(match[1], 'binary');
     }
     const streamStr = streamBuf.toString('latin1');
-    const hexRegex = /<([0-9a-fA-F]+)>/g;
-    let hMatch;
-    while ((hMatch = hexRegex.exec(streamStr)) !== null) {
-      try {
-        text += Buffer.from(hMatch[1], 'hex').toString('utf8');
-      } catch (err) {}
-    }
-    const parenRegex = /\(([^)]+)\)/g;
-    let pMatch;
-    while ((pMatch = parenRegex.exec(streamStr)) !== null) {
-      text += ' ' + pMatch[1];
+    // Split by ET (End of Text block) to preserve natural line and block breaks
+    const blocks = streamStr.split(/ET\b/);
+    for (const b of blocks) {
+      let blockText = '';
+      const hexRegex = /<([0-9a-fA-F]+)>/g;
+      let hMatch;
+      while ((hMatch = hexRegex.exec(b)) !== null) {
+        try {
+          blockText += Buffer.from(hMatch[1], 'hex').toString('utf8');
+        } catch (err) {}
+      }
+      const parenRegex = /\(([^)]+)\)/g;
+      let pMatch;
+      while ((pMatch = parenRegex.exec(b)) !== null) {
+        blockText += ' ' + pMatch[1];
+      }
+      if (blockText.trim()) {
+        text += blockText.trim() + '\n';
+      }
     }
   }
   return text.trim();
@@ -314,7 +323,7 @@ app.get('/api/bidders', (req, res) => {
   });
 });
 
-// --- 2. POST /api/extract (Deep Content OCR & Parsing) ---
+// --- 2. POST /api/extract (Deep Content OCR & Content-Only Parsing) ---
 app.post('/api/extract', upload.array('documents'), async (req, res) => {
   const files = req.files || [];
   const results = [];
@@ -322,7 +331,6 @@ app.post('/api/extract', upload.array('documents'), async (req, res) => {
   for (const file of files) {
     const inspected = await inspectDocumentContent(file);
     const content = inspected.text.toUpperCase();
-    const nameLower = file.originalname.toLowerCase();
 
     let docType = 'Unclassified Document';
     let detectedRegistration = null;
@@ -335,80 +343,110 @@ app.post('/api/extract', upload.array('documents'), async (req, res) => {
       status = 'FAIL';
       remarks.push('Document appears blank, unreadable, or corrupted.');
     } else {
-      // Check Document Classification
-      if (content.includes('GOODS AND SERVICES TAX') || content.includes('GSTIN') || nameLower.includes('gst')) {
+      // Check Document Classification PURELY based on content (filename is NOT a signal)
+      if (content.includes('GOODS AND SERVICES TAX') || content.includes('GSTIN') || GST_REGEX.test(content)) {
         docType = 'GST Registration Certificate';
         const match = content.match(GST_REGEX);
         if (match) {
           detectedRegistration = match[0];
           confidence = 0.95;
-          status = 'PASS';
-          remarks.push(`Valid GSTIN pattern found: ${detectedRegistration}`);
+          const regGst = MOCK_REGISTRY.gst[detectedRegistration];
+          if (regGst && regGst.status === 'ACTIVE') {
+            status = 'PASS';
+            remarks.push(`GSTIN: ${detectedRegistration} | Format: VALID | Mock GST Registry: ACTIVE (${regGst.legalName}) (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          } else if (regGst && regGst.status === 'SUSPENDED') {
+            status = 'FAIL';
+            remarks.push(`GSTIN: ${detectedRegistration} | Format: VALID | Mock GST Registry: SUSPENDED (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          } else {
+            status = 'REVIEW';
+            remarks.push(`GSTIN: ${detectedRegistration} | Format: VALID | Mock GST Registry: NOT FOUND in registry (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          }
         } else {
           status = 'FAIL';
           confidence = 0.4;
           remarks.push('Expected 15-character GSTIN structure missing in document text.');
         }
-      } else if (content.includes('INCOME TAX DEPARTMENT') || content.includes('PERMANENT ACCOUNT NUMBER') || nameLower.includes('pan')) {
+      } else if (content.includes('INCOME TAX DEPARTMENT') || content.includes('PERMANENT ACCOUNT NUMBER') || PAN_REGEX.test(content)) {
         docType = 'PAN Card';
         const match = content.match(PAN_REGEX);
         if (match) {
           detectedRegistration = match[0];
           confidence = 0.95;
-          status = 'PASS';
-          remarks.push(`Valid PAN found: ${detectedRegistration}`);
+          const regPan = MOCK_REGISTRY.pan[detectedRegistration];
+          if (regPan) {
+            status = 'PASS';
+            remarks.push(`PAN: ${detectedRegistration} | Format: VALID | Mock PAN Registry: VALID (${regPan.category}) (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          } else {
+            status = 'REVIEW';
+            remarks.push(`PAN: ${detectedRegistration} | Format: VALID | Mock PAN Registry: NOT FOUND in registry (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          }
         } else {
           status = 'FAIL';
           confidence = 0.4;
           remarks.push('Valid 10-character alphanumeric PAN format not found.');
         }
-      } else if (content.includes('UDYAM REGISTRATION') || content.includes('MSME') || nameLower.includes('udyam')) {
+      } else if (content.includes('UDYAM REGISTRATION') || content.includes('MINISTRY OF MICRO, SMALL') || UDYAM_REGEX.test(content)) {
         docType = 'Udyam Registration Certificate';
         const match = content.match(UDYAM_REGEX);
         if (match) {
-          detectedRegistration = match[0];
+          detectedRegistration = match[0].toUpperCase();
           confidence = 0.92;
-          status = 'PASS';
-          remarks.push(`Udyam reference found: ${detectedRegistration}`);
+          const regUdyam = MOCK_REGISTRY.udyam[detectedRegistration];
+          if (regUdyam) {
+            status = 'PASS';
+            remarks.push(`Udyam: ${detectedRegistration} | Format: VALID | Mock Udyam Registry: ACTIVE (${regUdyam.classification}) (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          } else {
+            status = 'REVIEW';
+            remarks.push(`Udyam: ${detectedRegistration} | Format: VALID | Mock Udyam Registry: NOT FOUND (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          }
         } else {
           status = 'REVIEW';
           confidence = 0.5;
           remarks.push('UDYAM-XX-XX-XXXXXXX standard registration ID not found.');
         }
-      } else if (content.includes('MINISTRY OF CORPORATE AFFAIRS') || content.includes('CERTIFICATE OF INCORPORATION') || nameLower.includes('mca') || nameLower.includes('cin')) {
+      } else if (content.includes('MINISTRY OF CORPORATE AFFAIRS') || content.includes('CERTIFICATE OF INCORPORATION') || MCA_CIN_REGEX.test(content)) {
         docType = 'MCA Certificate of Incorporation';
         const match = content.match(MCA_CIN_REGEX);
         if (match) {
           detectedRegistration = match[0];
           confidence = 0.95;
-          status = 'PASS';
-          remarks.push(`MCA CIN verified: ${detectedRegistration}`);
+          const regMca = MOCK_REGISTRY.mca[detectedRegistration];
+          if (regMca && regMca.status === 'ACTIVE') {
+            status = 'PASS';
+            remarks.push(`MCA CIN: ${detectedRegistration} | Format: VALID | Mock MCA21 Registry: ACTIVE (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          } else if (regMca) {
+            status = 'REVIEW';
+            remarks.push(`MCA CIN: ${detectedRegistration} | Format: VALID | Mock MCA21 Registry: ${regMca.status} (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          } else {
+            status = 'REVIEW';
+            remarks.push(`MCA CIN: ${detectedRegistration} | Format: VALID | Mock MCA21 Registry: NOT FOUND (MOCK GOVERNMENT CHECK — SIH DEMO)`);
+          }
         } else {
           status = 'REVIEW';
           remarks.push('21-character corporate CIN not detected.');
         }
-      } else if (content.includes('NOTICE INVITING TENDER') || content.includes('NIT') || content.includes('RFP') || nameLower.includes('tender')) {
+      } else if (content.includes('NOTICE INVITING TENDER') || content.includes('NIT') || content.includes('RFP') || content.includes('TENDER DOCUMENT')) {
         docType = 'Tender / NIT / RFP';
         status = 'PASS';
         confidence = 0.9;
-        remarks.push('Tender notice and scope specifications indexed.');
-      } else if (content.includes('BILL OF QUANTITIES') || content.includes('BOQ') || nameLower.includes('boq')) {
+        remarks.push('Tender notice and scope specifications indexed from content.');
+      } else if (content.includes('BILL OF QUANTITIES') || content.includes('BOQ SCHEDULE') || content.includes('SCHEDULE OF RATES')) {
         docType = 'Bill of Quantities (BOQ)';
         status = 'PASS';
         confidence = 0.9;
-        remarks.push('BOQ schedules and pricing sheet recognized.');
+        remarks.push('BOQ schedules and pricing sheet recognized from content.');
       } else {
         docType = 'Supporting Document / Unknown';
         status = 'REVIEW';
         confidence = 0.3;
-        remarks.push('Could not verify against standard statutory document templates.');
+        remarks.push('Could not verify against standard statutory document templates (no recognized statutory content).');
       }
 
-      // Check Expiry Date Keywords or Explicit Expiry Dates
-      if (content.includes('EXPIRED') || content.includes('VALIDITY LAPSED') || content.includes('LAPSED') || nameLower.includes('expired') || nameLower.includes('expiry')) {
+      // Check Expiry Date Keywords solely in document content (no filename inspection)
+      if (content.includes('EXPIRED') || content.includes('VALIDITY LAPSED') || content.includes('EXPIRED ON')) {
         isExpired = true;
         status = 'FAIL';
-        remarks.push('Validity period has EXPIRED or lapsed.');
+        remarks.push('Certificate content explicitly indicates validity period has EXPIRED or lapsed.');
       }
     }
 
@@ -426,197 +464,219 @@ app.post('/api/extract', upload.array('documents'), async (req, res) => {
 
   res.json({
     success: true,
-    engine: 'SendaTender Document Verification Engine (Demo Mode Active - Gemini / Regex / PDF Inspect)',
+    engine: 'SendaTender Document Verification Engine (Mock Government Check — SIH Demo)',
     totalDocuments: results.length,
     documents: results
   });
 });
 
-// --- 3. POST /api/process-bidder (ACTUAL VERIFICATION ON UPLOADED DOCUMENTS) ---
+// --- 3. POST /api/process-bidder (HARDENED MULTI-STAGE VERIFICATION) ---
 app.post('/api/process-bidder', upload.array('documents'), async (req, res) => {
   try {
     const uploadedFiles = req.files || [];
-    const expectedName = (req.body.name || '').trim();
-    const expectedGst = (req.body.gst || '').trim().toUpperCase();
-    const expectedPan = (req.body.pan || '').trim().toUpperCase();
-    const expectedUdyam = (req.body.udyam || '').trim().toUpperCase();
+    const declaredName = (req.body.name || '').trim();
+    const declaredGst = (req.body.gst || '').trim().toUpperCase();
+    const declaredPan = (req.body.pan || '').trim().toUpperCase();
+    const declaredUdyam = (req.body.udyam || '').trim().toUpperCase();
+    const declaredAddress = (req.body.address || '').trim();
     const packageRef = req.body.package || 'Tender #S26-104 (Valves & Piping)';
 
+    // Step 1: Inspect content of each uploaded file
     const inspectedDocs = [];
     for (const f of uploadedFiles) {
       const doc = await inspectDocumentContent(f);
       inspectedDocs.push(doc);
     }
 
-    // Combine all extracted text for whole-package cross-examination
+    // Step 2: Content-only extraction across entire document package (NEVER USE FILENAME AS EVIDENCE)
     const allText = inspectedDocs.map(d => d.text).join('\n').toUpperCase();
-    const fileNamesCombined = inspectedDocs.map(d => d.filename.toLowerCase()).join(' ');
+
+    // Check blank/corrupt docs
+    const hasBlankDoc = inspectedDocs.some(d => d.isBlankOrCorrupt);
+    const allDocsBlank = inspectedDocs.length > 0 && inspectedDocs.every(d => d.isBlankOrCorrupt);
+
+    // Check expiry solely from document text
+    const hasExpiredDoc = inspectedDocs.some(d => {
+      const t = d.text.toUpperCase();
+      return t.includes('EXPIRED') || t.includes('VALIDITY LAPSED') || t.includes('EXPIRED ON');
+    });
+
+    // Check for explicit entity mismatch / fraud keywords in document text
+    const hasExplicitMismatch = inspectedDocs.some(d => {
+      const t = d.text.toUpperCase();
+      return t.includes('WRONG NAME') || t.includes('FAKE COMPANY') || t.includes('DIFFERENT ENTITY') || t.includes('MISMATCHED COMPANY');
+    });
+
+    // Extract statutory identifiers strictly from text
+    const extractedGstMatch = allText.match(GST_REGEX);
+    const extractedPanMatch = allText.match(PAN_REGEX);
+    const extractedUdyamMatch = allText.match(UDYAM_REGEX);
+    const extractedMcaMatch = allText.match(MCA_CIN_REGEX);
+
+    const extractedGst = extractedGstMatch ? extractedGstMatch[0] : null;
+    const extractedPan = extractedPanMatch ? extractedPanMatch[0] : null;
+    const extractedUdyam = extractedUdyamMatch ? extractedUdyamMatch[0].toUpperCase() : null;
+    const extractedMca = extractedMcaMatch ? extractedMcaMatch[0] : null;
+
+    // Check if the uploaded package has ANY statutory content or tender content
+    const hasStatutoryContent = Boolean(
+      extractedGst || extractedPan || extractedUdyam || extractedMca ||
+      allText.includes('GOODS AND SERVICES TAX') ||
+      allText.includes('INCOME TAX DEPARTMENT') ||
+      allText.includes('UDYAM') ||
+      allText.includes('MINISTRY OF CORPORATE AFFAIRS') ||
+      allText.includes('NOTICE INVITING TENDER') ||
+      allText.includes('BILL OF QUANTITIES')
+    );
+
+    // Resolve identifiers: prefer extracted from documents, fallback to declared if user entered them
+    const effectiveGst = extractedGst || (declaredGst && GST_REGEX.test(declaredGst) ? declaredGst : null);
+    const effectivePan = extractedPan || (declaredPan && PAN_REGEX.test(declaredPan) ? declaredPan : null);
+    const effectiveUdyam = extractedUdyam || (declaredUdyam && UDYAM_REGEX.test(declaredUdyam) ? declaredUdyam : null);
+    // MCA CIN must come from document extraction; never guess or default
+    const effectiveMca = extractedMca || null;
+
+    // Determine entity name to cross-match
+    let targetProfileName = declaredName;
+    if (!targetProfileName && effectiveGst && MOCK_REGISTRY.gst[effectiveGst]) {
+      targetProfileName = MOCK_REGISTRY.gst[effectiveGst].legalName;
+    }
+
+    // Step 3: Run Multi-Stage Verification Pipeline with Mock Government Registry
+    // FORMAT VALID ≠ VERIFIED (Extracted -> Format -> Cross-Match -> Mock Registry -> Final)
+    const verification = verifyWithMockRegistry({
+      gstNumber: effectiveGst,
+      panNumber: effectivePan,
+      udyamId: effectiveUdyam,
+      mcaCin: effectiveMca,
+      profileName: declaredName || ''
+    });
 
     const findings = [];
     const flags = [];
 
-    // 1. Mandatory Checklist Check
-    let hasGstDoc = false;
-    let hasPanDoc = false;
-    let hasUdyamDoc = false;
-    let hasTenderDoc = false;
-    let isBlankDetected = false;
-    let isExpiredDetected = false;
-    let isMismatchDetected = false;
-
-    // Inspect individual files
-    inspectedDocs.forEach(d => {
-      const textUpper = d.text.toUpperCase();
-      const fn = d.filename.toLowerCase();
-
-      if (d.isBlankOrCorrupt) {
-        isBlankDetected = true;
-        flags.push(`Blank or corrupt document uploaded: "${d.filename}"`);
+    // Additional cross-document profile match check:
+    // If user declared a profile name that differs from extracted document text or mock registry
+    let nameMismatchDetected = hasExplicitMismatch;
+    if (declaredName && effectiveGst && MOCK_REGISTRY.gst[effectiveGst]) {
+      const regName = MOCK_REGISTRY.gst[effectiveGst].legalName.toLowerCase();
+      const decName = declaredName.toLowerCase();
+      // Check first two significant words
+      const decWords = decName.split(/\s+/).filter(w => w.length > 2);
+      const matchedWord = decWords.some(w => regName.includes(w));
+      if (!matchedWord) {
+        nameMismatchDetected = true;
+        flags.push(`Declared entity name "${declaredName}" does not match registered GSTN title "${MOCK_REGISTRY.gst[effectiveGst].legalName}".`);
       }
+    }
 
-      // Check Expiry
-      if (textUpper.includes('EXPIRED') || textUpper.includes('VALIDITY LAPSED') || fn.includes('expired') || fn.includes('expiry')) {
-        isExpiredDetected = true;
-        flags.push(`Expired certificate detected in file: "${d.filename}"`);
-      }
+    // If declared GST differs from extracted GST
+    if (declaredGst && extractedGst && declaredGst !== extractedGst) {
+      flags.push(`Discrepancy: Declared GSTIN (${declaredGst}) does not match document-extracted GSTIN (${extractedGst}).`);
+    }
 
-      // Identify Document Types
-      if (textUpper.includes('GOODS AND SERVICES TAX') || textUpper.includes('GSTIN') || fn.includes('gst')) {
-        hasGstDoc = true;
-      }
-      if (textUpper.includes('INCOME TAX DEPARTMENT') || textUpper.includes('PERMANENT ACCOUNT NUMBER') || fn.includes('pan')) {
-        hasPanDoc = true;
-      }
-      if (textUpper.includes('UDYAM') || textUpper.includes('MSME') || fn.includes('udyam')) {
-        hasUdyamDoc = true;
-      }
-      if (textUpper.includes('TENDER') || textUpper.includes('NIT') || textUpper.includes('BOQ') || fn.includes('tender') || fn.includes('nit') || fn.includes('boq')) {
-        hasTenderDoc = true;
-      }
-
-      // Name Mismatch Detection
-      // If document explicitly contains a different company name
-      if (textUpper.includes('WRONG NAME') || textUpper.includes('FAKE COMPANY') || textUpper.includes('DIFFERENT ENTITY') || fn.includes('mismatch') || fn.includes('wrong')) {
-        isMismatchDetected = true;
-        flags.push(`Company name mismatch detected in "${d.filename}" — entity does not match bidder profile.`);
-      }
-    });
-
-    // Check specific statutory numbers
-    const foundGstMatch = allText.match(GST_REGEX);
-    const foundPanMatch = allText.match(PAN_REGEX);
-    const foundUdyamMatch = allText.match(UDYAM_REGEX);
-
-    const actualGst = foundGstMatch ? foundGstMatch[0] : (expectedGst && GST_REGEX.test(expectedGst) ? expectedGst : null);
-    const actualPan = foundPanMatch ? foundPanMatch[0] : (expectedPan && PAN_REGEX.test(expectedPan) ? expectedPan : null);
-    const actualUdyam = foundUdyamMatch ? foundUdyamMatch[0] : (expectedUdyam && UDYAM_REGEX.test(expectedUdyam) ? expectedUdyam : null);
-
-    // --- BUILD MATRIX ACCORDING TO ACTUAL EVIDENCE (NEVER AUTO-PASS) ---
-    // 1. GST Status
-    let gstStatus = 'FAIL';
-    let gstEvidence = '';
-    if (isBlankDetected && !hasGstDoc) {
+    // Evaluate GST Checkpoint
+    let gstStatus = verification.gst.finalStatus;
+    let gstEvidence = verification.gst.evidence;
+    if (allDocsBlank) {
       gstStatus = 'FAIL';
-      gstEvidence = 'Uploaded GST file is blank or unreadable.';
-    } else if (isExpiredDetected && fileNamesCombined.includes('gst')) {
+      gstEvidence = 'Uploaded document package is blank or unreadable.';
+    } else if (hasExpiredDoc) {
       gstStatus = 'FAIL';
-      gstEvidence = 'GST registration validity has expired.';
-    } else if (actualGst) {
-      if (isMismatchDetected) {
-        gstStatus = 'REVIEW';
-        gstEvidence = `GSTIN ${actualGst} detected but entity details show mismatch (MOCK GOVERNMENT CHECK — SIH DEMO).`;
-      } else {
-        gstStatus = 'PASS';
-        gstEvidence = `GSTIN ${actualGst} verified active on API Setu (MOCK GOVERNMENT CHECK — SIH DEMO).`;
-      }
-    } else if (hasGstDoc) {
+      gstEvidence = `Extracted: ${effectiveGst || 'N/A'} | Format: ${verification.gst.formatValid ? 'VALID' : 'INVALID'} | Mock GST Registry: LAPSED/EXPIRED (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: FAIL`;
+      flags.push('GST or associated statutory certificate has lapsed/expired.');
+    } else if (nameMismatchDetected && gstStatus === 'PASS') {
       gstStatus = 'REVIEW';
-      gstEvidence = 'GST document uploaded, but valid 15-character GSTIN was not extracted.';
-      flags.push('Unverified GSTIN structure in uploaded certificate');
-    } else {
-      gstStatus = 'MISSING';
-      gstEvidence = 'GST Registration Certificate was not provided in the package.';
-      flags.push('Mandatory GST Registration Certificate is missing');
+      gstEvidence = `Extracted: ${effectiveGst} | Format: VALID | Cross-match: ENTITY NAME MISMATCH | Mock GST Registry: ACTIVE | Final: REVIEW`;
     }
 
-    // 2. PAN Status
-    let panStatus = 'FAIL';
-    let panEvidence = '';
-    if (isMismatchDetected) {
+    // Evaluate PAN Checkpoint
+    let panStatus = verification.pan.finalStatus;
+    let panEvidence = verification.pan.evidence;
+    if (allDocsBlank) {
+      panStatus = 'FAIL';
+      panEvidence = 'Uploaded document package is blank or unreadable.';
+    } else if (nameMismatchDetected && panStatus === 'PASS') {
       panStatus = 'REVIEW';
-      panEvidence = 'PAN name differs from GST legal entity title (MOCK GOVERNMENT CHECK — SIH DEMO).';
-    } else if (actualPan) {
-      panStatus = 'PASS';
-      panEvidence = `PAN ${actualPan} validated and linked (MOCK GOVERNMENT CHECK — SIH DEMO).`;
-    } else if (hasPanDoc) {
-      panStatus = 'REVIEW';
-      panEvidence = 'PAN document uploaded, but standard 10-character PAN number could not be confirmed.';
-      flags.push('Unverified PAN number format in uploaded file');
-    } else {
-      panStatus = 'MISSING';
-      panEvidence = 'PAN Card copy missing from upload.';
-      flags.push('Mandatory PAN Card is missing');
+      panEvidence = `Extracted: ${effectivePan} | Format: VALID | Cross-match: ENTITY MISMATCH | Mock PAN Registry: VALID | Final: REVIEW`;
     }
 
-    // 3. Udyam Status
-    let udyamStatus = 'MISSING';
-    let udyamEvidence = '';
-    if (actualUdyam) {
-      udyamStatus = 'PASS';
-      udyamEvidence = `Udyam ${actualUdyam} active MSME status (MOCK GOVERNMENT CHECK — SIH DEMO).`;
-    } else if (hasUdyamDoc) {
-      udyamStatus = 'REVIEW';
-      udyamEvidence = 'Udyam certificate attached but registration number requires manual verification.';
-    } else {
-      udyamStatus = 'MISSING';
-      udyamEvidence = 'Udyam/MSME Certificate not uploaded in package.';
+    // Evaluate Udyam Checkpoint
+    let udyamStatus = verification.udyam.finalStatus;
+    let udyamEvidence = verification.udyam.evidence;
+
+    // Evaluate MCA Checkpoint (CRITICAL: MUST NEVER DEFAULT TO PASS!)
+    let mcaStatus = verification.mca.finalStatus;
+    let mcaEvidence = verification.mca.evidence;
+    if (!effectiveMca) {
+      mcaStatus = 'MISSING';
+      mcaEvidence = 'Extracted: NONE | Format: MISSING | Mock MCA21 Registry: NO CIN EXTRACTED (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: MISSING';
     }
 
-    // 4. MCA Status
-    let mcaStatus = 'PASS';
-    let mcaEvidence = 'Corporate CIN and MCA21 master data verified (MOCK GOVERNMENT CHECK — SIH DEMO).';
-    if (isMismatchDetected) {
-      mcaStatus = 'REVIEW';
-      mcaEvidence = 'MCA21 registered entity name does not match upload headers.';
-    }
-
-    // 5. Document Suite Status
+    // Evaluate Mandatory Document Suite Checkpoint
     let docsStatus = 'PASS';
-    let docsEvidence = 'All uploaded documents verified successfully.';
-    if (isBlankDetected) {
+    let docsEvidence = 'Document package passed content checks with statutory references.';
+    if (allDocsBlank || (uploadedFiles.length > 0 && hasBlankDoc && !hasStatutoryContent)) {
       docsStatus = 'FAIL';
-      docsEvidence = 'One or more uploaded documents were detected as blank or unreadable.';
-    } else if (isExpiredDetected) {
+      docsEvidence = 'One or more uploaded documents were detected as completely blank, corrupted, or unreadable.';
+      flags.push('Blank or unreadable document detected in upload package');
+    } else if (!hasStatutoryContent) {
       docsStatus = 'FAIL';
-      docsEvidence = 'Expired documents detected during OCR date parsing.';
-    } else if (isMismatchDetected) {
+      docsEvidence = 'Document package contains no identifiable statutory registrations, PAN, GSTIN, or tender references.';
+      flags.push('No statutory or procurement information found in uploaded documents');
+    } else if (hasExpiredDoc) {
+      docsStatus = 'FAIL';
+      docsEvidence = 'Document inspection detected expired statutory certificate or lapsed validity date.';
+      flags.push('Statutory certificate expired prior to tender submission');
+    } else if (nameMismatchDetected) {
       docsStatus = 'REVIEW';
-      docsEvidence = 'Entity name / address mismatch detected across documents.';
-    } else if (!actualGst || !actualPan) {
+      docsEvidence = 'Document contents reveal entity name / address discrepancy against bidder profile.';
+      flags.push('Entity name or cross-document data mismatch detected');
+    } else if (!effectiveGst && !effectivePan) {
       docsStatus = 'MISSING';
-      docsEvidence = 'Mandatory statutory documents are missing from the submission.';
+      docsEvidence = 'Core statutory documents (GSTIN and PAN) missing from package.';
+      flags.push('Mandatory GSTIN and PAN certificates missing');
     }
 
-    // Calculate Dynamic Score based on REAL checks
+    // Record verification flags
+    if (verification.gst.registryResult === 'NOT_FOUND_IN_REGISTRY') {
+      flags.push(`GSTIN "${effectiveGst}" is syntactically valid but NOT FOUND in Mock GST Registry.`);
+    }
+    if (verification.gst.registryResult === 'SUSPENDED_BY_TAX_AUTHORITY') {
+      flags.push(`GSTIN "${effectiveGst}" is SUSPENDED by tax authorities (non-compliance).`);
+    }
+    if (verification.pan.registryResult === 'NOT_FOUND_IN_REGISTRY') {
+      flags.push(`PAN "${effectivePan}" is syntactically valid but NOT FOUND in Mock PAN Registry.`);
+    }
+    if (verification.pan.crossMatch === 'PAN_GST_MISMATCH') {
+      flags.push(`PAN "${effectivePan}" does not match the PAN characters in GSTIN "${effectiveGst}".`);
+    }
+
+    // Calculate Dynamic Compliance Score based on REAL MULTI-STAGE RESULTS
     let score = 0;
-    const checks = [gstStatus, panStatus, udyamStatus, mcaStatus, docsStatus];
-    checks.forEach(st => {
+    const checkpointStatuses = [gstStatus, panStatus, udyamStatus, mcaStatus, docsStatus];
+    checkpointStatuses.forEach(st => {
       if (st === 'PASS') score += 20;
       else if (st === 'REVIEW') score += 8;
       else if (st === 'MISSING') score += 0;
       else if (st === 'FAIL') score -= 5;
     });
 
-    if (isBlankDetected || isExpiredDetected) {
-      score = Math.min(score, 45);
-    }
-    if (isMismatchDetected) {
-      score = Math.min(score, 55);
+    if (allDocsBlank || !hasStatutoryContent) {
+      score = Math.min(score, 20);
+    } else if (hasExpiredDoc || verification.gst.registryResult === 'SUSPENDED_BY_TAX_AUTHORITY') {
+      score = Math.min(score, 38);
+    } else if (nameMismatchDetected || verification.gst.registryResult === 'NOT_FOUND_IN_REGISTRY') {
+      score = Math.min(score, 58);
     }
 
-    score = Math.max(15, Math.min(98, score));
+    score = Math.max(10, Math.min(98, score));
     const risk = score >= 80 ? 'Low' : score >= 55 ? 'Medium' : 'High';
-    const status = score >= 80 ? 'Ready for review' : (isBlankDetected || isExpiredDetected || score < 50) ? 'Flagged' : 'Needs review';
+    const status = (allDocsBlank || !hasStatutoryContent || hasExpiredDoc || score < 50) 
+      ? 'Flagged' 
+      : score >= 80 
+        ? 'Ready for review' 
+        : 'Needs review';
 
     const matrix = {
       gst: { status: gstStatus, label: 'GSTN Registration Check', evidence: gstEvidence },
@@ -627,23 +687,34 @@ app.post('/api/process-bidder', upload.array('documents'), async (req, res) => {
     };
 
     if (flags.length === 0) {
-      findings.push('All submitted documents passed automated inspection with zero discrepancies.');
+      findings.push('All submitted documents passed multi-stage mock verification with zero discrepancies.');
     } else {
       flags.forEach(f => findings.push(f));
     }
 
-    const bidderName = expectedName || (actualGst ? `Vendor (${actualGst})` : `Uploaded Package (${uploadedFiles.length} files)`);
+    // Resolve Bidder Legal Name without relying on uploaded filename
+    let bidderName = declaredName;
+    if (!bidderName) {
+      if (effectiveGst && MOCK_REGISTRY.gst[effectiveGst]) {
+        bidderName = MOCK_REGISTRY.gst[effectiveGst].legalName;
+      } else if (effectiveGst) {
+        bidderName = `Vendor (${effectiveGst})`;
+      } else {
+        bidderName = `Vendor Submission (${uploadedFiles.length} doc${uploadedFiles.length !== 1 ? 's' : ''})`;
+      }
+    }
 
     const newBidder = {
       id: `bidder-user-${Date.now()}`,
       name: bidderName,
-      gst: actualGst || 'Not Extracted / Missing',
-      pan: actualPan || 'Not Extracted / Missing',
-      udyam: actualUdyam || 'Not Extracted / Missing',
-      mca: 'U28100MH2021PTC112233',
+      declaredAddress: declaredAddress || 'Not Provided',
+      gst: effectiveGst || 'Not Extracted / Missing',
+      pan: effectivePan || 'Not Extracted / Missing',
+      udyam: effectiveUdyam || 'Not Extracted / Missing',
+      mca: effectiveMca || 'Not Extracted / Missing',
       package: packageRef,
       demoType: 'Live Uploaded Verification',
-      typeDescription: 'Processed from actual uploaded user documents (Dynamic OCR & Inspection)',
+      typeDescription: 'Processed from actual uploaded user documents (Multi-Stage Mock Registry Check)',
       score,
       risk,
       status,
@@ -652,13 +723,13 @@ app.post('/api/process-bidder', upload.array('documents'), async (req, res) => {
       findings,
       flags,
       audit: [
-        { action: 'Deep Document OCR & Verification Completed', timestamp: 'Just now', user: 'System (Inspection Engine)' },
+        { action: 'Multi-Stage Document Verification Completed', timestamp: 'Just now', user: 'System (Multi-Stage Mock Engine)' },
         { action: 'Package Uploaded by Vendor', timestamp: 'Just now', user: 'Vendor Portal' }
       ]
     };
 
     const bidders = loadBidders();
-    // Do not overwrite preloaded demo bidders; prepend the real user upload
+    // Prepend user upload without deleting preloaded demo bidders
     bidders.unshift(newBidder);
     saveBidders(bidders);
 
@@ -667,12 +738,14 @@ app.post('/api/process-bidder', upload.array('documents'), async (req, res) => {
       bidder: newBidder,
       analysis: {
         totalFiles: uploadedFiles.length,
-        isBlankDetected,
-        isExpiredDetected,
-        isMismatchDetected,
-        actualGst,
-        actualPan,
-        actualUdyam
+        hasBlankDoc,
+        hasExpiredDoc,
+        hasStatutoryContent,
+        nameMismatchDetected,
+        effectiveGst,
+        effectivePan,
+        effectiveUdyam,
+        effectiveMca
       }
     });
   } catch (err) {

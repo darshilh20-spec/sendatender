@@ -200,6 +200,32 @@ let drop = $('#dropzone');
 ['dragleave', 'drop'].forEach(x => drop.addEventListener(x, e => { e.preventDefault(); drop.classList.remove('drag'); }));
 drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 
+// Helper: Render multi-stage reasoning stages (EXTRACTED -> FORMAT -> CROSS-MATCH -> MOCK REGISTRY -> FINAL)
+function renderMultiStageEvidence(evidenceText) {
+  if (!evidenceText) return '';
+  const parts = evidenceText.split(' | ');
+  if (parts.length >= 3) {
+    return `
+      <div class="evidence-pipeline" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; align-items:center;">
+        ${parts.map((part, idx) => {
+          const isFinal = idx === parts.length - 1;
+          const isPass = part.includes('PASS') || part.includes('ACTIVE') || part.includes('VALID');
+          const isFail = part.includes('FAIL') || part.includes('SUSPENDED') || part.includes('REJECTED');
+          const isRev = part.includes('REVIEW') || part.includes('NOT FOUND') || part.includes('MISMATCH') || part.includes('PENDING');
+          const bg = isFinal 
+            ? (isPass ? '#dcfce7' : isFail ? '#fee2e2' : '#fef3c7') 
+            : '#f1f5f9';
+          const fg = isFinal 
+            ? (isPass ? '#15803d' : isFail ? '#b91c1c' : '#b45309') 
+            : '#334155';
+          return `<span style="font-size:10px; background:${bg}; color:${fg}; padding:2px 6px; border-radius:4px; font-weight:${isFinal ? '750' : '500'}; font-family:monospace;">${esc(part)}</span>${idx < parts.length - 1 ? '<span style="color:#94a3b8; font-size:10px; font-weight:bold;">→</span>' : ''}`;
+        }).join('')}
+      </div>
+    `;
+  }
+  return `<p style="margin:3px 0 0 0; font-size:11px; color:#64748b; line-height:1.4;">${esc(evidenceText)}</p>`;
+}
+
 // ACTUAL MULTIPART UPLOAD & REAL DOCUMENT VERIFICATION (NEVER AUTO-PASS)
 $('#verify').onclick = async () => {
   if (!files.length) return;
@@ -213,7 +239,18 @@ $('#verify').onclick = async () => {
       formData.append('documents', f.raw);
     });
 
-    formData.append('name', 'Vendor Submission (' + files[0].name.split('.')[0] + ')');
+    // Collect Vendor Profile fields (declared legal entity profile)
+    const declaredName = $('#vendor-profile-name') ? $('#vendor-profile-name').value.trim() : '';
+    const declaredGst = $('#vendor-profile-gst') ? $('#vendor-profile-gst').value.trim() : '';
+    const declaredPan = $('#vendor-profile-pan') ? $('#vendor-profile-pan').value.trim() : '';
+    const declaredUdyam = $('#vendor-profile-udyam') ? $('#vendor-profile-udyam').value.trim() : '';
+    const declaredAddress = $('#vendor-profile-address') ? $('#vendor-profile-address').value.trim() : '';
+
+    if (declaredName) formData.append('name', declaredName);
+    if (declaredGst) formData.append('gst', declaredGst);
+    if (declaredPan) formData.append('pan', declaredPan);
+    if (declaredUdyam) formData.append('udyam', declaredUdyam);
+    if (declaredAddress) formData.append('address', declaredAddress);
     formData.append('package', 'Tender #S26-104 (Valves & Piping)');
 
     const res = await fetch('/api/process-bidder', {
@@ -236,14 +273,14 @@ $('#verify').onclick = async () => {
 
     const matrixEntries = Object.entries(bidder.matrix || {});
     const matrixHtml = matrixEntries.map(([k, m]) => `
-      <div class="check-item" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; border-bottom:1px dashed #e2e8f0; padding-bottom:8px;">
-        <div style="padding-right:12px;">
+      <div class="check-item" style="margin-bottom:12px; border-bottom:1px dashed #e2e8f0; padding-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
           <b style="font-size:12px; color:#1e293b;">${esc(m.label || k.toUpperCase())}</b>
-          <p style="margin:3px 0 0 0; font-size:11px; color:#64748b; line-height:1.4;">${esc(m.evidence)}</p>
+          <span class="badge ${m.status.toLowerCase()}" style="font-weight:800; padding:3px 9px; border-radius:4px; font-size:10px; letter-spacing:0.4px; background:${m.status === 'PASS' ? '#dcfce7' : m.status === 'FAIL' ? '#fee2e2' : m.status === 'MISSING' ? '#f1f5f9' : '#fef3c7'}; color:${m.status === 'PASS' ? '#15803d' : m.status === 'FAIL' ? '#b91c1c' : m.status === 'MISSING' ? '#475569' : '#b45309'};">
+            ${m.status}
+          </span>
         </div>
-        <span class="badge ${m.status.toLowerCase()}" style="font-weight:800; padding:3px 9px; border-radius:4px; font-size:10px; letter-spacing:0.4px; background:${m.status === 'PASS' ? '#dcfce7' : m.status === 'FAIL' ? '#fee2e2' : m.status === 'MISSING' ? '#f1f5f9' : '#fef3c7'}; color:${m.status === 'PASS' ? '#15803d' : m.status === 'FAIL' ? '#b91c1c' : m.status === 'MISSING' ? '#475569' : '#b45309'};">
-          ${m.status}
-        </span>
+        ${renderMultiStageEvidence(m.evidence)}
       </div>
     `).join('');
 
@@ -252,7 +289,10 @@ $('#verify').onclick = async () => {
         <div class="score-ring" style="--score:${bidder.score * 3.6}deg"><b>${bidder.score}%</b></div>
         <div>
           <h3>Document Verification Result <span class="risk ${bidder.risk.toLowerCase()}">${bidder.risk} risk</span></h3>
-          <p>Results reflect actual inspection of uploaded files. Invalid, blank, or expired documents are rigorously evaluated.</p>
+          <p>Multi-stage verification: Document Extraction → Format Validation → Cross-Match → Mock Registry Lookup.</p>
+          <div style="margin-top:5px; font-size:11px; font-weight:700; color:#0369a1;">
+            🔒 MOCK GOVERNMENT CHECK — SIH DEMO (API Setu / GSTN / NSDL PAN / Udyam / MCA21)
+          </div>
         </div>
         <button class="secondary download" onclick="downloadPdfReport('${bidder.id}')">Download PDF Dossier</button>
       </div>
@@ -265,7 +305,7 @@ $('#verify').onclick = async () => {
           <h3 style="margin-bottom:12px; font-size:12px; text-transform:uppercase; color:#0f172a;">Findings & Discrepancies</h3>
           ${bidder.findings.length ? bidder.findings.map(x => `<div class="check-item"><span class="${x.includes('zero') ? 'ok' : 'warn'}">${x.includes('zero') ? '✓' : '!'}</span> ${esc(x)}</div>`).join('') : '<div class="check-item"><span class="ok">✓</span> No material discrepancies detected</div>'}
           <div class="check-item" style="margin-top:12px; font-size:11px; color:#64748b;">
-            <span class="ok">✓</span> Verified against statutory rules (MOCK GOVERNMENT CHECK — SIH DEMO)
+            <span class="ok">✓</span> MOCK GOVERNMENT CHECK — SIH DEMO: Evaluated against mock statutory registry
           </div>
         </div>
       </div>
@@ -334,7 +374,7 @@ function selectBidder(id) {
         </span>
       </div>
       <div style="font-size:11px; color:#475569; margin-top:4px; line-height:1.4;">
-        <b>Evidence:</b> ${esc(m.evidence)}
+        ${renderMultiStageEvidence(m.evidence)}
       </div>
     </div>
   `).join('');

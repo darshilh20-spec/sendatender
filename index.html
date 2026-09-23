@@ -101,6 +101,40 @@
               <span><strong>1. Tender documents</strong> — NIT/RFP, tender notice, specifications, BOQ</span>
               <span><strong>2. Vendor documents</strong> — GST, PAN, Udyam/MSME, ITR, bank proof, technical proposal</span>
             </div>
+
+            <!-- VENDOR SUBMISSION PROFILE (SIH DEMO) -->
+            <div class="vendor-profile-form" style="background:#fff; border:1px solid #dce8ed; border-radius:10px; padding:16px; margin-bottom:14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h3 style="margin:0; font-size:14px; color:#0f172a;">Vendor Profile & Statutory Declaration</h3>
+                <span style="font-size:10px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:10px;">Optional Declaration</span>
+              </div>
+              <p style="font-size:11px; color:#64748b; margin:0 0 12px; line-height:1.4;">
+                Enter declared entity details to cross-validate against uploaded documents. If left blank, the system automatically extracts them.
+              </p>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                  <label for="vendor-profile-name" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">Legal Entity Name</label>
+                  <input id="vendor-profile-name" type="text" placeholder="e.g. Aarav Industrial Solutions Pvt. Ltd." style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                </div>
+                <div>
+                  <label for="vendor-profile-gst" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">GSTIN <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
+                  <input id="vendor-profile-gst" type="text" placeholder="e.g. 27AAQCA1234F1ZP" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                </div>
+                <div>
+                  <label for="vendor-profile-pan" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">PAN <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
+                  <input id="vendor-profile-pan" type="text" placeholder="e.g. AAQCA1234F" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                </div>
+                <div>
+                  <label for="vendor-profile-udyam" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">Udyam Number <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
+                  <input id="vendor-profile-udyam" type="text" placeholder="e.g. UDYAM-MH-01-0012345" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                </div>
+                <div style="grid-column:1 / -1;">
+                  <label for="vendor-profile-address" style="display:block; font-size:11px; font-weight:700; color:#334155; margin-bottom:3px;">Registered Business Address <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
+                  <input id="vendor-profile-address" type="text" placeholder="e.g. Plot 42, MIDC Industrial Area, Andheri East, Mumbai 400093" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:12px; outline:none; box-sizing:border-box;" />
+                </div>
+              </div>
+            </div>
+
             <div id="dropzone" class="dropzone">
               <input id="bulk-input" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
               <div class="upload-icon">↑</div>
