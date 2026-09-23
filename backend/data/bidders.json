@@ -1,0 +1,310 @@
+[
+  {
+    "id": "bidder-1",
+    "name": "Aarav Industrial Solutions Pvt. Ltd.",
+    "gst": "27AAQCA1234F1ZP",
+    "pan": "AAQCA1234F",
+    "udyam": "UDYAM-MH-01-0012345",
+    "mca": "U28100MH2018PTC310234",
+    "package": "Tender #S26-104 (Valves & Piping)",
+    "demoType": "Preloaded Demo: Fully Compliant",
+    "typeDescription": "Archetype 1: Fully Compliant — Valid GST, PAN, Udyam, MCA, 100% document match",
+    "score": 96,
+    "risk": "Low",
+    "status": "Ready for review",
+    "docs": 8,
+    "matrix": {
+      "gst": {
+        "status": "PASS",
+        "label": "GSTN Registration Check",
+        "evidence": "GSTIN 27AAQCA1234F1ZP verified active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "pan": {
+        "status": "PASS",
+        "label": "PAN Identity Check",
+        "evidence": "PAN AAQCA1234F linked and matched to MCA entity (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "udyam": {
+        "status": "PASS",
+        "label": "Udyam MSME Registry",
+        "evidence": "UDYAM-MH-01-0012345 valid manufacturing status (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "mca": {
+        "status": "PASS",
+        "label": "MCA21 Company Status",
+        "evidence": "CIN U28100MH2018PTC310234 active, ROC Mumbai (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "documents": {
+        "status": "PASS",
+        "label": "Mandatory Document Suite",
+        "evidence": "NIT, BOQ, EMD, ITR, GST, Bank Proof verified valid and unexpired"
+      }
+    },
+    "findings": [
+      "All statutory and technical criteria satisfied with zero discrepancies"
+    ],
+    "flags": [],
+    "audit": [
+      {
+        "action": "AI Verification Completed",
+        "timestamp": "Today, 10:42 AM",
+        "user": "System (Demo Engine)"
+      },
+      {
+        "action": "Package Submitted",
+        "timestamp": "Today, 10:36 AM",
+        "user": "Vendor Portal"
+      }
+    ]
+  },
+  {
+    "id": "bidder-2",
+    "name": "NexGen Infra Systems LLP",
+    "gst": "29AABCN5521K1ZQ",
+    "pan": "AABCN5521K",
+    "udyam": "",
+    "mca": "AAB-5521",
+    "package": "Tender #S26-104 (Valves & Piping)",
+    "demoType": "Preloaded Demo: Missing Documents",
+    "typeDescription": "Archetype 2: Missing Documents — Udyam Certificate & FY24 ITR missing",
+    "score": 72,
+    "risk": "Medium",
+    "status": "Needs review",
+    "docs": 5,
+    "matrix": {
+      "gst": {
+        "status": "PASS",
+        "label": "GSTN Registration Check",
+        "evidence": "GSTIN 29AABCN5521K1ZQ active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "pan": {
+        "status": "PASS",
+        "label": "PAN Identity Check",
+        "evidence": "PAN AABCN5521K active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "udyam": {
+        "status": "MISSING",
+        "label": "Udyam Registration Missing",
+        "evidence": "No MSME/Udyam certificate attached in submission package"
+      },
+      "mca": {
+        "status": "PASS",
+        "label": "MCA21 Company Status",
+        "evidence": "MCA LLP identification active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "documents": {
+        "status": "MISSING",
+        "label": "Incomplete Documentation",
+        "evidence": "ITR FY 2024-25 and MSME declaration not provided"
+      }
+    },
+    "findings": [
+      "Udyam/MSME proof missing from uploaded package",
+      "Audited ITR FY 2024-25 not attached"
+    ],
+    "flags": [
+      "Udyam Certificate is missing",
+      "ITR FY 2024–25 missing"
+    ],
+    "audit": [
+      {
+        "action": "Flagged for Missing Discrepancy",
+        "timestamp": "Today, 09:18 AM",
+        "user": "System (Demo Engine)"
+      },
+      {
+        "action": "Package Submitted",
+        "timestamp": "Today, 09:10 AM",
+        "user": "Vendor Portal"
+      }
+    ]
+  },
+  {
+    "id": "bidder-3",
+    "name": "Kaveri Steel & Forgings Ltd.",
+    "gst": "33AABCK8899P1ZM",
+    "pan": "AABCK8899P",
+    "udyam": "UDYAM-TN-02-0098765",
+    "mca": "L27100TN1995PLC031245",
+    "package": "Tender #S26-104 (Valves & Piping)",
+    "demoType": "Preloaded Demo: Expired Certificate",
+    "typeDescription": "Archetype 3: Expired Certificate — ISO 9001 and Tax Clearance Certificate expired",
+    "score": 64,
+    "risk": "Medium",
+    "status": "Needs review",
+    "docs": 7,
+    "matrix": {
+      "gst": {
+        "status": "PASS",
+        "label": "GSTN Registration Check",
+        "evidence": "GSTIN 33AABCK8899P1ZM active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "pan": {
+        "status": "PASS",
+        "label": "PAN Identity Check",
+        "evidence": "PAN verified (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "udyam": {
+        "status": "PASS",
+        "label": "Udyam MSME Registry",
+        "evidence": "UDYAM-TN-02-0098765 active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "mca": {
+        "status": "PASS",
+        "label": "MCA21 Company Status",
+        "evidence": "CIN L27100TN1995PLC031245 active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "documents": {
+        "status": "FAIL",
+        "label": "Expired Statutory Documents",
+        "evidence": "Tax Clearance Certificate expired on 31-Dec-2025; ISO-9001 expired"
+      }
+    },
+    "findings": [
+      "Tax Clearance Certificate lapsed 3 months ago",
+      "ISO Quality Certificate validity expired"
+    ],
+    "flags": [
+      "Expired Tax Clearance Certificate",
+      "Expired ISO 9001 Certificate"
+    ],
+    "audit": [
+      {
+        "action": "Expiry Detection Alert Raised",
+        "timestamp": "Today, 08:45 AM",
+        "user": "System (Demo Engine)"
+      },
+      {
+        "action": "Package Submitted",
+        "timestamp": "Today, 08:30 AM",
+        "user": "Vendor Portal"
+      }
+    ]
+  },
+  {
+    "id": "bidder-4",
+    "name": "Shree Krishna Heavy Engineering",
+    "gst": "07AAACS9988G1ZQ",
+    "pan": "AAACS9988G",
+    "udyam": "UDYAM-DL-01-0044556",
+    "mca": "U29100DL2015PTC284910",
+    "package": "Tender #S26-104 (Valves & Piping)",
+    "demoType": "Preloaded Demo: Name/Address Mismatch",
+    "typeDescription": "Archetype 4: Name/Address Mismatch — PAN registered name differs from GST & Bank proof",
+    "score": 58,
+    "risk": "High",
+    "status": "Needs review",
+    "docs": 6,
+    "matrix": {
+      "gst": {
+        "status": "PASS",
+        "label": "GSTN Registration Check",
+        "evidence": "Registered as \"Shree Krishna Heavy Engineering Private Limited\""
+      },
+      "pan": {
+        "status": "REVIEW",
+        "label": "Entity Name Mismatch",
+        "evidence": "PAN records \"SK Heavy Eng Works Sole Prop\" (Entity mismatch)"
+      },
+      "udyam": {
+        "status": "PASS",
+        "label": "Udyam MSME Registry",
+        "evidence": "Registered unit in Delhi (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "mca": {
+        "status": "REVIEW",
+        "label": "ROC Address Discrepancy",
+        "evidence": "Registered office address does not match GST state code"
+      },
+      "documents": {
+        "status": "REVIEW",
+        "label": "Bank Name Mismatch",
+        "evidence": "Bank account name differs from PAN entity title"
+      }
+    },
+    "findings": [
+      "Legal Entity Name mismatch between PAN card and GST certificate",
+      "Bank passbook issued to alternate trade name"
+    ],
+    "flags": [
+      "PAN entity name does not match GST registration",
+      "Bank proof title mismatch"
+    ],
+    "audit": [
+      {
+        "action": "Entity Mismatch Alert Triggered",
+        "timestamp": "Yesterday, 04:15 PM",
+        "user": "System (Demo Engine)"
+      },
+      {
+        "action": "Package Submitted",
+        "timestamp": "Yesterday, 04:00 PM",
+        "user": "Vendor Portal"
+      }
+    ]
+  },
+  {
+    "id": "bidder-5",
+    "name": "Vertex Global Supplies Ltd.",
+    "gst": "06AAACV1298E1Z4",
+    "pan": "AAACV1298E",
+    "udyam": "UDYAM-HR-03-0077889",
+    "mca": "U51909HR2021PLC092100",
+    "package": "Tender #S26-104 (Valves & Piping)",
+    "demoType": "Preloaded Demo: Multiple Issues",
+    "typeDescription": "Archetype 5: Multiple Issues — CVC Debarred sister firm, expired EMD, invalid GSTIN status",
+    "score": 35,
+    "risk": "High",
+    "status": "Flagged",
+    "docs": 4,
+    "matrix": {
+      "gst": {
+        "status": "FAIL",
+        "label": "GSTN Suspended",
+        "evidence": "GSTIN 06AAACV1298E1Z4 suspended due to non-filing of GSTR-3B (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "pan": {
+        "status": "PASS",
+        "label": "PAN Identity Check",
+        "evidence": "PAN active (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "udyam": {
+        "status": "REVIEW",
+        "label": "Udyam Category Mismatch",
+        "evidence": "Trading enterprise claiming manufacturing quota"
+      },
+      "mca": {
+        "status": "REVIEW",
+        "label": "Director Disqualification",
+        "evidence": "DIN 08491200 under scrutiny on MCA portal (MOCK GOVERNMENT CHECK — SIH DEMO)"
+      },
+      "documents": {
+        "status": "FAIL",
+        "label": "Critical Non-Compliance",
+        "evidence": "EMD Bank Guarantee expired; Listed in CVC negative watch records"
+      }
+    },
+    "findings": [
+      "GSTIN suspended by tax authorities",
+      "EMD expired prior to bid submission date",
+      "Central Vigilance Commission (CVC) adverse watch match"
+    ],
+    "flags": [
+      "GSTIN suspended for non-compliance",
+      "Expired EMD Guarantee",
+      "CVC Negative Watchmatch"
+    ],
+    "audit": [
+      {
+        "action": "Auto-Flagged (Severe Violations)",
+        "timestamp": "Yesterday, 02:08 PM",
+        "user": "System (Demo Engine)"
+      },
+      {
+        "action": "Package Submitted",
+        "timestamp": "Yesterday, 01:50 PM",
+        "user": "Vendor Portal"
+      }
+    ]
+  }
+]

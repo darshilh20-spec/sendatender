@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables & secrets
+.env
+.env.*
+*.env
+
+# Temporary test & scratch files
+*.tmp
+*.log
+scratch/
+test-*.pdf
+report_test.pdf
+
+# Server uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Operating System files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE & Editor caches
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
