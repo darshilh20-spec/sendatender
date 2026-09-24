@@ -42,6 +42,7 @@
           <select id="language" aria-label="Language">
             <option value="en">English</option>
             <option value="hi">हिन्दी</option>
+            <option value="mr">मराठी</option>
           </select>
           <button id="theme-toggle" class="theme-toggle" title="Switch theme">☾</button>
           <div class="avatar" id="officer-avatar">DO</div>
@@ -202,40 +203,146 @@
             <button id="officer-logout" class="secondary" style="color:#b91c1c;" data-i18n="logoutBtn">Lock / Log Out</button>
           </div>
         </div>
-        <div class="filters">
-          <label class="search">⌕ <input id="search" placeholder="Search bidder, GSTIN or archetype…"></label>
-          <select id="status-filter">
-            <option value="All" data-i18n="filterAllStatus">All statuses</option>
-            <option value="Ready for review" data-i18n="statusReady">Ready for review</option>
-            <option value="Approved" data-i18n="statusApproved">Approved</option>
-            <option value="Flagged" data-i18n="statusFlagged">Flagged</option>
-            <option value="Needs review" data-i18n="statusNeedsReview">Needs review</option>
-          </select>
-          <select id="risk-filter">
-            <option value="All" data-i18n="filterAllRisk">All risk levels</option>
-            <option value="Low" data-i18n="riskLow">Low</option>
-            <option value="Medium" data-i18n="riskMedium">Medium</option>
-            <option value="High" data-i18n="riskHigh">High</option>
-          </select>
+        <!-- OFFICER TABS (Phase 3) -->
+        <div class="officer-tabs-bar" style="display:flex; gap:8px; margin-bottom:18px; border-bottom:1px solid var(--line); padding-bottom:12px;">
+          <button id="tab-btn-dossiers" class="officer-tab-btn active" onclick="switchOfficerTab('dossiers')">
+            📑 <span data-i18n="officerTabDossiers">Individual Dossiers</span>
+          </button>
+          <button id="tab-btn-comparison" class="officer-tab-btn" onclick="switchOfficerTab('comparison')">
+            ⚖️ <span data-i18n="officerTabComparison">Bidder Comparison Desk</span>
+          </button>
+          <button id="tab-btn-audit" class="officer-tab-btn" onclick="switchOfficerTab('audit')">
+            ⛓️ <span data-i18n="officerTabAuditTrail">Hash-Chained Audit Trail</span>
+          </button>
         </div>
-        <div class="officer-layout">
-          <div class="table-card">
-            <table>
+
+        <!-- SUB-TAB 1: INDIVIDUAL DOSSIERS (DEFAULT EXISTING DESK) -->
+        <div id="officer-tab-content-dossiers">
+          <div class="filters">
+            <label class="search">⌕ <input id="search" placeholder="Search bidder, GSTIN or archetype…"></label>
+            <select id="status-filter">
+              <option value="All" data-i18n="filterAllStatus">All statuses</option>
+              <option value="Ready for review" data-i18n="statusReady">Ready for review</option>
+              <option value="Approved" data-i18n="statusApproved">Approved</option>
+              <option value="Flagged" data-i18n="statusFlagged">Flagged</option>
+              <option value="Needs review" data-i18n="statusNeedsReview">Needs review</option>
+            </select>
+            <select id="risk-filter">
+              <option value="All" data-i18n="filterAllRisk">All risk levels</option>
+              <option value="Low" data-i18n="riskLow">Low</option>
+              <option value="Medium" data-i18n="riskMedium">Medium</option>
+              <option value="High" data-i18n="riskHigh">High</option>
+            </select>
+          </div>
+          <div class="officer-layout">
+            <div class="table-card">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="thBidder">BIDDER / ARCHETYPE</th>
+                    <th data-i18n="thPackage">PACKAGE</th>
+                    <th data-i18n="thCompliance">COMPLIANCE</th>
+                    <th data-i18n="thRisk">RISK</th>
+                    <th data-i18n="thStatus">STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="bidder-list"></tbody>
+              </table>
+            </div>
+            <aside class="review-panel" id="review-panel">
+              <div class="empty" data-i18n="emptyReviewPanel">Select a bidder to view the verification record.</div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 2: BIDDER COMPARISON DESK (PART A) -->
+        <div id="officer-tab-content-comparison" class="hidden">
+          <div class="comparison-header-box" style="margin-bottom:16px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <h3 style="margin:0 0 4px 0; font-size:16px;" data-i18n="comparisonTitle">Comparative Bidder Compliance Matrix</h3>
+              <p style="margin:0; font-size:12px; color:var(--muted);" data-i18n="comparisonSub">Side-by-side statutory screening and compliance analysis across all 5 active archetypes</p>
+            </div>
+            <div style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:6px 12px; border-radius:20px; font-weight:700;">
+              📅 Demo Tender #S26-104 · MoPNG / GeM
+            </div>
+          </div>
+          <div class="table-card comparison-table-card" style="overflow-x:auto;">
+            <table class="comparison-table">
               <thead>
                 <tr>
-                  <th data-i18n="thBidder">BIDDER / ARCHETYPE</th>
-                  <th data-i18n="thPackage">PACKAGE</th>
-                  <th data-i18n="thCompliance">COMPLIANCE</th>
+                  <th data-i18n="thBidder">BIDDER</th>
+                  <th data-i18n="thEntityId">ENTITY ID</th>
+                  <th data-i18n="thCompliance">SCORE</th>
                   <th data-i18n="thRisk">RISK</th>
-                  <th data-i18n="thStatus">STATUS</th>
+                  <th data-i18n="thReadiness">READINESS</th>
+                  <th>PASS</th>
+                  <th>REVIEW</th>
+                  <th>FAIL</th>
+                  <th>MISSING</th>
+                  <th>EXPIRED</th>
+                  <th data-i18n="thStatutorySuite">STATUTORY SUITE</th>
+                  <th data-i18n="thBlockers">BLOCKERS</th>
+                  <th data-i18n="thStatus">OFFICER STATUS</th>
+                  <th data-i18n="thAction">ACTION</th>
                 </tr>
               </thead>
-              <tbody id="bidder-list"></tbody>
+              <tbody id="comparison-tbody"></tbody>
             </table>
           </div>
-          <aside class="review-panel" id="review-panel">
-            <div class="empty" data-i18n="emptyReviewPanel">Select a bidder to view the verification record.</div>
-          </aside>
+        </div>
+
+        <!-- SUB-TAB 3: AUDIT TRAIL (PART B & C) -->
+        <div id="officer-tab-content-audit" class="hidden">
+          <div class="audit-trail-header-box" style="margin-bottom:16px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h3 style="margin:0 0 4px 0; font-size:16px;" data-i18n="auditTrailTitle">Hash-Chained Audit Trail</h3>
+              <p style="margin:0; font-size:12px; color:var(--muted);" data-i18n="auditTrailSub">Cryptographically sealed, tamper-evident chronological event ledger (SHA-256 Chained)</p>
+            </div>
+            <div id="audit-integrity-indicator" class="integrity-indicator verified" style="font-size:11px; padding:6px 12px; border-radius:20px; font-weight:800; display:flex; align-items:center; gap:6px;">
+              <span>🛡️</span> <span id="audit-integrity-text" data-i18n="auditIntegrityBadge">Audit Integrity: Verified (SHA-256)</span>
+            </div>
+          </div>
+
+          <!-- AUDIT FILTERS -->
+          <div class="filters audit-filters-grid" style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+            <label class="search" style="flex:1.5; min-width:220px;">
+              ⌕ <input id="audit-search" placeholder="Search event, actor, remarks, hash…" oninput="renderAuditTrail()" data-i18n="auditSearchPlaceholder">
+            </label>
+            <select id="audit-bidder-filter" style="flex:1; min-width:160px;" onchange="renderAuditTrail()">
+              <option value="All" data-i18n="auditFilterAllBidders">All Bidders</option>
+            </select>
+            <select id="audit-action-filter" style="flex:1; min-width:140px;" onchange="renderAuditTrail()">
+              <option value="All" data-i18n="auditFilterAllActions">All Actions</option>
+              <option value="Verification" data-i18n="auditFilterVerification">Verification</option>
+              <option value="Upload" data-i18n="auditFilterUpload">Uploads</option>
+              <option value="Note" data-i18n="auditFilterNotes">Officer Notes</option>
+              <option value="Decision" data-i18n="auditFilterDecisions">Decisions</option>
+              <option value="Simulation" data-i18n="auditFilterSimulation">Simulation Submissions</option>
+            </select>
+            <select id="audit-actor-filter" style="flex:1; min-width:130px;" onchange="renderAuditTrail()">
+              <option value="All" data-i18n="auditFilterAllActors">All Actors</option>
+              <option value="System" data-i18n="auditActorSystem">System Engines</option>
+              <option value="Officer" data-i18n="auditActorOfficer">Officer</option>
+              <option value="Vendor" data-i18n="auditActorVendor">Vendor Portal</option>
+            </select>
+          </div>
+
+          <!-- AUDIT EVENTS TABLE -->
+          <div class="table-card audit-table-card" style="overflow-x:auto;">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>TIMESTAMP</th>
+                  <th>ACTOR / ROLE</th>
+                  <th>ACTION</th>
+                  <th>BIDDER</th>
+                  <th>EVENT DETAILS / REMARKS</th>
+                  <th>CRYPTOGRAPHIC HASH (SHA-256)</th>
+                </tr>
+              </thead>
+              <tbody id="audit-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </section>
     </main>
@@ -269,6 +376,61 @@
   </div>
 
   <div id="toast" class="toast"></div>
+
+  <!-- TENDER BUDDY FLOATING TRIGGER -->
+  <button id="tb-trigger" class="tb-trigger" title="Open Tender Buddy">
+    <span class="tb-icon">🤖</span>
+    <span class="tb-label" data-i18n="tbTrigger">Tender Buddy</span>
+  </button>
+
+  <!-- TENDER BUDDY CHAT WINDOW -->
+  <div id="tb-window" class="tb-window hidden" role="dialog" aria-labelledby="tb-header-title">
+    <div class="tb-header">
+      <div class="tb-header-info">
+        <span class="tb-avatar">🤖</span>
+        <div>
+          <b id="tb-header-title" data-i18n="tbHeaderTitle">Tender Buddy</b>
+          <small id="tb-header-sub" data-i18n="tbHeaderSub">AI Procurement Co-Pilot</small>
+        </div>
+      </div>
+      <button id="tb-close" class="tb-close" aria-label="Close Tender Buddy">✕</button>
+    </div>
+
+    <!-- Active Context Pill (shows current bidder or view awareness) -->
+    <div id="tb-context-banner" class="tb-context-banner">
+      <span class="tb-context-dot"></span>
+      <span id="tb-context-text">Context: Overview</span>
+    </div>
+
+    <!-- DYNAMIC PROGRESS SNAPSHOT CARD -->
+    <div id="tb-progress-card" class="tb-progress-card">
+      <div class="tb-progress-head">
+        <span class="tb-progress-entity" id="tb-progress-entity">No active submission</span>
+        <span class="tb-progress-pct" id="tb-progress-pct">0%</span>
+      </div>
+      <div class="tb-progress-bar-bg">
+        <div id="tb-progress-bar-fill" class="tb-progress-bar-fill" style="width: 0%;"></div>
+      </div>
+      <div class="tb-progress-badges">
+        <span class="tb-badge pass" title="Passed statutory documents" id="tb-badge-pass">🟢 0</span>
+        <span class="tb-badge review" title="Documents under review / discrepancy" id="tb-badge-review">🟡 0</span>
+        <span class="tb-badge fail" title="Failed or expired documents" id="tb-badge-fail">🔴 0</span>
+        <span class="tb-badge missing" title="Missing required documents" id="tb-badge-missing">⚪ 0</span>
+      </div>
+    </div>
+
+    <!-- Chat Messages Scroll Container -->
+    <div id="tb-messages" class="tb-messages"></div>
+
+    <!-- Suggested Quick Prompts -->
+    <div id="tb-suggestions" class="tb-suggestions"></div>
+
+    <!-- Input Form -->
+    <form id="tb-form" class="tb-form" onsubmit="event.preventDefault(); sendTenderBuddyMessage();">
+      <input id="tb-input" type="text" placeholder="Ask about tenders, documents, compliance..." autocomplete="off" data-i18n="tbInputPlaceholder" />
+      <button type="submit" id="tb-submit" class="tb-send-btn" aria-label="Send message">➤</button>
+    </form>
+  </div>
 
   <script src="app.js"></script>
 </body>

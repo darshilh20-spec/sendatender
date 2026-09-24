@@ -6,6 +6,9 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const pdfParse = require('pdf-parse');
 const { verifyWithMockRegistry, MOCK_REGISTRY } = require('./mockGovChecks');
+const { chainAuditEvents, verifyAuditChain, computeEventHash, GENESIS_HASH } = require('./auditChain');
+const { buildProgressState } = require('./progressEngine');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -217,6 +220,26 @@ app.post('/api/officer/login', (req, res) => {
     error: 'Invalid officer credentials. Access denied.'
   });
 });
+
+app.post('/api/officer/logout', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Officer session locked and terminated successfully.'
+  });
+});
+
+// Middleware to enforce officer authorization
+function requireOfficerAuth(req, res, next) {
+  const token = req.headers['authorization'] || req.headers['x-officer-token'];
+  // Support both header tokens and query token for ease of browser/testing
+  if (token && (token.startsWith('ST-OFFICER-SESSION-') || token.startsWith('Bearer ST-OFFICER-SESSION-'))) {
+    return next();
+  }
+  return res.status(403).json({
+    success: false,
+    error: 'Access Denied: Officer authentication required to access this resource.'
+  });
+}
 
 const zlib = require('zlib');
 
@@ -786,6 +809,257 @@ app.post('/api/decision', (req, res) => {
   });
 });
 
+// --- 4B. POST /api/officer/note ---
+app.post('/api/officer/note', (req, res) => {
+  const { id, note, officerName = 'Desk Officer (SIH 26100)' } = req.body;
+  if (!id || !note || !note.trim()) {
+    return res.status(400).json({ success: false, error: 'Bidder ID and note text are required.' });
+  }
+
+  const bidders = loadBidders();
+  const bidder = bidders.find(b => b.id === id);
+  if (!bidder) {
+    return res.status(404).json({ success: false, error: `Bidder with ID ${id} not found` });
+  }
+
+  if (!Array.isArray(bidder.officerNotes)) {
+    bidder.officerNotes = [];
+  }
+
+  const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const newNote = {
+    id: 'note-' + Date.now(),
+    text: note.trim(),
+    officer: officerName,
+    timestamp
+  };
+  bidder.officerNotes.unshift(newNote);
+
+  bidder.audit.unshift({
+    action: 'Officer Note Added',
+    remarks: `Note recorded: "${note.trim().slice(0, 80)}${note.length > 80 ? '...' : ''}"`,
+    timestamp,
+    user: officerName
+  });
+
+  saveBidders(bidders);
+
+  res.json({
+    success: true,
+    message: 'Officer review note recorded successfully',
+    note: newNote,
+    bidder
+  });
+});
+
+// --- 4C. POST /api/officer/resolve-finding ---
+app.post('/api/officer/resolve-finding', (req, res) => {
+  const { id, findingIndex, remarks = '', officerName = 'Desk Officer (SIH 26100)' } = req.body;
+  const bidders = loadBidders();
+  const bidder = bidders.find(b => b.id === id);
+  if (!bidder) {
+    return res.status(404).json({ success: false, error: `Bidder with ID ${id} not found` });
+  }
+
+  if (typeof findingIndex !== 'number' || findingIndex < 0 || findingIndex >= (bidder.findings || []).length) {
+    return res.status(400).json({ success: false, error: 'Invalid finding index.' });
+  }
+
+  if (!Array.isArray(bidder.resolvedFindings)) {
+    bidder.resolvedFindings = [];
+  }
+
+  const resolvedItem = bidder.findings[findingIndex];
+  const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  bidder.resolvedFindings.push({
+    finding: resolvedItem,
+    resolvedBy: officerName,
+    remarks: remarks.trim() || 'Finding reviewed and accepted under discretionary officer review',
+    timestamp
+  });
+
+  bidder.audit.unshift({
+    action: 'Discrepancy Reviewed & Resolved',
+    remarks: `Finding resolved: "${resolvedItem.slice(0, 60)}" - Remarks: ${remarks || 'Approved'}`,
+    timestamp,
+    user: officerName
+  });
+
+  saveBidders(bidders);
+
+  res.json({
+    success: true,
+    message: 'Finding marked as reviewed and resolved by officer',
+    bidder
+  });
+});
+
+// --- 4D. POST /api/vendor/submit-simulation ---
+app.post('/api/vendor/submit-simulation', (req, res) => {
+  const { id, vendorName } = req.body;
+  const bidders = loadBidders();
+  const bidder = bidders.find(b => b.id === id);
+  if (!bidder) {
+    return res.status(404).json({ success: false, error: `Bidder with ID ${id} not found` });
+  }
+
+  const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  bidder.status = 'Ready for review';
+  bidder.audit.unshift({
+    action: 'Simulation Submitted: Final Tender Package',
+    remarks: 'Bidder finalized submission in SendaTender simulation mode for Tender #S26-104',
+    timestamp,
+    user: vendorName || bidder.name
+  });
+
+  saveBidders(bidders);
+
+  res.json({
+    success: true,
+    message: 'Tender package successfully submitted in simulation mode.',
+    bidder
+  });
+});
+
+// --- 4E. GET /api/officer/comparison (PHASE 3: BIDDER COMPARISON) ---
+app.get('/api/officer/comparison', requireOfficerAuth, (req, res) => {
+  try {
+    const bidders = loadBidders();
+    
+    // Build factual comparison items using the authoritative Progress Engine
+    const comparison = bidders.map(b => {
+      const pState = buildProgressState({ bidder: b, role: 'officer' });
+      const m = b.matrix || {};
+      const sr = pState.submissionReadiness;
+      const c = pState.compliance;
+      const isSubmitted = (b.audit || []).some(a => a.action && a.action.includes('Simulation Submitted'));
+
+      return {
+        id: b.id,
+        name: b.name,
+        package: b.package,
+        demoType: b.demoType,
+        score: b.score,
+        risk: b.risk,
+        status: b.status,
+        submissionReadiness: sr.status, // READY | REQUIRES REVIEW | NOT READY
+        counts: {
+          pass: c.passCount,
+          review: c.reviewCount,
+          fail: c.failCount,
+          missing: c.missingCount,
+          expired: c.expiredCount
+        },
+        statutory: {
+          gst: m.gst?.status || 'MISSING',
+          pan: m.pan?.status || 'MISSING',
+          udyam: m.udyam?.status || 'MISSING',
+          mca: m.mca?.status || 'MISSING',
+          documents: m.documents?.status || 'MISSING'
+        },
+        blockersCount: (sr.blockers || []).length,
+        blockers: sr.blockers || [],
+        reviewItemsCount: (sr.reviewItems || []).length,
+        reviewItems: sr.reviewItems || [],
+        submissionStatus: isSubmitted ? 'Submitted (Simulation Mode)' : 'Unsubmitted',
+        officerStatus: b.status, // Approved | Needs review | Flagged | Ready for review
+        officerNotesCount: (b.officerNotes || []).length,
+        resolvedFindingsCount: (b.resolvedFindings || []).length
+      };
+    });
+
+    res.json({
+      success: true,
+      tender: {
+        id: 'S26-104',
+        title: 'Tender #S26-104 (Valves & Piping)',
+        authority: 'Ministry of Petroleum & Natural Gas / GeM',
+        deadline: '28-Feb-2026 15:00 IST'
+      },
+      totalBidders: comparison.length,
+      comparison
+    });
+  } catch (err) {
+    console.error('Error compiling bidder comparison:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- 4F. GET /api/officer/audit-trail (PHASE 3: HASH-CHAINED AUDIT TRAIL) ---
+app.get('/api/officer/audit-trail', requireOfficerAuth, (req, res) => {
+  try {
+    const { bidderId, actionType, actor, q } = req.query;
+    const bidders = loadBidders();
+    let allEvents = [];
+
+    bidders.forEach(b => {
+      // Chain audit events cryptographically per bidder
+      const chained = chainAuditEvents(b.audit || [], b.id, 'S26-104');
+      chained.forEach(ev => {
+        allEvents.push({
+          ...ev,
+          bidderId: b.id,
+          bidderName: b.name,
+          tenderId: 'S26-104'
+        });
+      });
+    });
+
+    // Verify overall cryptographic integrity across bidder chains
+    // When aggregating across bidders, verify each bidder's chain integrity
+    let isAllVerified = true;
+    bidders.forEach(b => {
+      const chained = chainAuditEvents(b.audit || [], b.id, 'S26-104');
+      const v = verifyAuditChain(chained);
+      if (!v.verified) isAllVerified = false;
+    });
+
+    const integrity = {
+      verified: isAllVerified,
+      status: isAllVerified ? 'VERIFIED_SECURE' : 'TAMPER_DETECTED',
+      totalEvents: allEvents.length
+    };
+
+    // Apply filtering
+    let filtered = allEvents;
+    if (bidderId && bidderId !== 'All') {
+      filtered = filtered.filter(e => e.bidderId === bidderId);
+    }
+    if (actionType && actionType !== 'All') {
+      filtered = filtered.filter(e => (e.action || '').toLowerCase().includes(actionType.toLowerCase()));
+    }
+    if (actor && actor !== 'All') {
+      filtered = filtered.filter(e => (e.user || '').toLowerCase().includes(actor.toLowerCase()));
+    }
+    if (q && q.trim()) {
+      const query = q.trim().toLowerCase();
+      filtered = filtered.filter(e => 
+        (e.action || '').toLowerCase().includes(query) ||
+        (e.user || '').toLowerCase().includes(query) ||
+        (e.remarks || '').toLowerCase().includes(query) ||
+        (e.bidderName || '').toLowerCase().includes(query)
+      );
+    }
+
+    // Sort newest first by default
+    res.json({
+      success: true,
+      integrity: {
+        verified: integrity.verified,
+        status: integrity.status === 'VERIFIED_SECURE' ? 'Verified' : (integrity.status === 'VERIFIED_EMPTY' ? 'Verified (Empty)' : 'Tamper Detected'),
+        chainHead: integrity.chainHead,
+        totalEvents: allEvents.length
+      },
+      totalFiltered: filtered.length,
+      events: filtered
+    });
+  } catch (err) {
+    console.error('Error compiling audit trail:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // --- 5. GET /api/report/:id ---
 app.get('/api/report/:id', (req, res) => {
   const { id } = req.params;
@@ -902,6 +1176,65 @@ app.get('/api/report/:id', (req, res) => {
   } catch (err) {
     console.error('PDF Generation Error:', err);
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Tender Buddy AI Assistant & Progress Engine Endpoints
+const { processTenderBuddyChat } = require('./tenderBuddy');
+
+app.get('/api/tender-buddy/progress', (req, res) => {
+  const { bidderId, role = 'vendor', view = 'home', lang = 'en' } = req.query;
+  const bidders = loadBidders();
+  let bidder = null;
+
+  if (bidderId) {
+    bidder = bidders.find(b => b.id === bidderId);
+  }
+
+  const progressState = buildProgressState({
+    bidder,
+    role,
+    view,
+    lang
+  });
+
+  res.json({
+    success: true,
+    progress: progressState
+  });
+});
+
+app.post('/api/tender-buddy/chat', async (req, res) => {
+  try {
+    const { message, lang, context, history } = req.body;
+    if (!message || typeof message !== 'string') {
+      return res.status(400).json({ success: false, error: 'A user message string is required.' });
+    }
+
+    // Authoritative bidder lookup: if bidderId is provided in context, resolve from server truth
+    let enrichedContext = { ...(context || {}) };
+    if (enrichedContext.bidder?.id) {
+      const bidders = loadBidders();
+      const serverBidder = bidders.find(b => b.id === enrichedContext.bidder.id);
+      if (serverBidder) {
+        enrichedContext.bidder = serverBidder;
+      }
+    }
+
+    const response = await processTenderBuddyChat({
+      message,
+      lang: lang || 'en',
+      context: enrichedContext,
+      history: history || []
+    });
+
+    res.json(response);
+  } catch (err) {
+    console.error('Tender Buddy Chat Endpoint Error:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Sorry, Tender Buddy is temporarily unavailable. Please try again or use the relevant SendaTender page.'
+    });
   }
 });
 

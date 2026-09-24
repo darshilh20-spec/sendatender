@@ -1,6 +1,6 @@
 [
   {
-    "id": "bidder-user-1790188647474",
+    "id": "bidder-user-1790269308076",
     "name": "AP INDUSTRIES",
     "declaredAddress": "Not Provided",
     "gst": "Not Extracted / Missing",
@@ -107,6 +107,84 @@
     "flags": [],
     "audit": [
       {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 10:37:00 pm",
+        "user": "Aarav Submissions Desk"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Phase 3 Verification Note: All criteria confirmed.\"",
+        "timestamp": "24/9/2026, 10:37:00 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 10:36:59 pm",
+        "user": "Aarav Industrial Solutions Pvt. Ltd."
+      },
+      {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 10:29:56 pm",
+        "user": "Aarav Industrial Solutions Pvt. Ltd."
+      },
+      {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 10:29:49 pm",
+        "user": "Aarav Submissions Desk"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Phase 3 Verification Note: All criteria confirmed.\"",
+        "timestamp": "24/9/2026, 10:29:49 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 10:21:36 pm",
+        "user": "Aarav Submissions Desk"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Phase 3 Verification Note: All criteria confirmed.\"",
+        "timestamp": "24/9/2026, 10:21:36 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 10:21:07 pm",
+        "user": "Aarav Submissions Desk"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Phase 3 Verification Note: All criteria confirmed.\"",
+        "timestamp": "24/9/2026, 10:21:07 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 10:19:33 pm",
+        "user": "Aarav Submissions Desk"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Phase 3 Verification Note: All criteria confirmed.\"",
+        "timestamp": "24/9/2026, 10:19:33 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Simulation Submitted: Final Tender Package",
+        "remarks": "Bidder finalized submission in SendaTender simulation mode for Tender #S26-104",
+        "timestamp": "24/9/2026, 9:58:27 pm",
+        "user": "Aarav Industrial Solutions Pvt. Ltd."
+      },
+      {
         "action": "AI Verification Completed",
         "timestamp": "Today, 10:42 AM",
         "user": "System (Demo Engine)"
@@ -115,6 +193,38 @@
         "action": "Package Submitted",
         "timestamp": "Today, 10:36 AM",
         "user": "Vendor Portal"
+      }
+    ],
+    "officerNotes": [
+      {
+        "id": "note-1790269620833",
+        "text": "Phase 3 Verification Note: All criteria confirmed.",
+        "officer": "Lead Desk Officer",
+        "timestamp": "24/9/2026, 10:37:00 pm"
+      },
+      {
+        "id": "note-1790269189357",
+        "text": "Phase 3 Verification Note: All criteria confirmed.",
+        "officer": "Lead Desk Officer",
+        "timestamp": "24/9/2026, 10:29:49 pm"
+      },
+      {
+        "id": "note-1790268696508",
+        "text": "Phase 3 Verification Note: All criteria confirmed.",
+        "officer": "Lead Desk Officer",
+        "timestamp": "24/9/2026, 10:21:36 pm"
+      },
+      {
+        "id": "note-1790268667738",
+        "text": "Phase 3 Verification Note: All criteria confirmed.",
+        "officer": "Lead Desk Officer",
+        "timestamp": "24/9/2026, 10:21:07 pm"
+      },
+      {
+        "id": "note-1790268573155",
+        "text": "Phase 3 Verification Note: All criteria confirmed.",
+        "officer": "Lead Desk Officer",
+        "timestamp": "24/9/2026, 10:19:33 pm"
       }
     ]
   },
@@ -231,6 +341,36 @@
     ],
     "audit": [
       {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Tax Clearance Certificate lapsed 3 months ago\" - Remarks: Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:37:00 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Tax Clearance Certificate lapsed 3 months ago\" - Remarks: Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:29:49 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Tax Clearance Certificate lapsed 3 months ago\" - Remarks: Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:21:36 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Tax Clearance Certificate lapsed 3 months ago\" - Remarks: Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:21:07 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Tax Clearance Certificate lapsed 3 months ago\" - Remarks: Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:19:33 pm",
+        "user": "Lead Desk Officer"
+      },
+      {
         "action": "Expiry Detection Alert Raised",
         "timestamp": "Today, 08:45 AM",
         "user": "System (Demo Engine)"
@@ -239,6 +379,38 @@
         "action": "Package Submitted",
         "timestamp": "Today, 08:30 AM",
         "user": "Vendor Portal"
+      }
+    ],
+    "resolvedFindings": [
+      {
+        "finding": "Tax Clearance Certificate lapsed 3 months ago",
+        "resolvedBy": "Lead Desk Officer",
+        "remarks": "Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:19:33 pm"
+      },
+      {
+        "finding": "Tax Clearance Certificate lapsed 3 months ago",
+        "resolvedBy": "Lead Desk Officer",
+        "remarks": "Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:21:07 pm"
+      },
+      {
+        "finding": "Tax Clearance Certificate lapsed 3 months ago",
+        "resolvedBy": "Lead Desk Officer",
+        "remarks": "Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:21:36 pm"
+      },
+      {
+        "finding": "Tax Clearance Certificate lapsed 3 months ago",
+        "resolvedBy": "Lead Desk Officer",
+        "remarks": "Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:29:49 pm"
+      },
+      {
+        "finding": "Tax Clearance Certificate lapsed 3 months ago",
+        "resolvedBy": "Lead Desk Officer",
+        "remarks": "Verified address discrepancy resolved.",
+        "timestamp": "24/9/2026, 10:37:00 pm"
       }
     ]
   },
@@ -293,6 +465,42 @@
     ],
     "audit": [
       {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Legal Entity Name mismatch between PAN card and GST certific\" - Remarks: Discrepancy reviewed and accepted per board resolution",
+        "timestamp": "24/9/2026, 10:36:59 pm",
+        "user": "Desk Officer (SIH 26100)"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Legal entity title verified against original trade certificate under manual revi...\"",
+        "timestamp": "24/9/2026, 10:36:59 pm",
+        "user": "Desk Officer (SIH 26100)"
+      },
+      {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Legal Entity Name mismatch between PAN card and GST certific\" - Remarks: Discrepancy reviewed and accepted per board resolution",
+        "timestamp": "24/9/2026, 10:29:56 pm",
+        "user": "Desk Officer (SIH 26100)"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Legal entity title verified against original trade certificate under manual revi...\"",
+        "timestamp": "24/9/2026, 10:29:56 pm",
+        "user": "Desk Officer (SIH 26100)"
+      },
+      {
+        "action": "Discrepancy Reviewed & Resolved",
+        "remarks": "Finding resolved: \"Legal Entity Name mismatch between PAN card and GST certific\" - Remarks: Discrepancy reviewed and accepted per board resolution",
+        "timestamp": "24/9/2026, 9:58:27 pm",
+        "user": "Desk Officer (SIH 26100)"
+      },
+      {
+        "action": "Officer Note Added",
+        "remarks": "Note recorded: \"Legal entity title verified against original trade certificate under manual revi...\"",
+        "timestamp": "24/9/2026, 9:58:27 pm",
+        "user": "Desk Officer (SIH 26100)"
+      },
+      {
         "action": "Entity Mismatch Alert Triggered",
         "timestamp": "Yesterday, 04:15 PM",
         "user": "System (Demo Engine)"
@@ -301,6 +509,46 @@
         "action": "Package Submitted",
         "timestamp": "Yesterday, 04:00 PM",
         "user": "Vendor Portal"
+      }
+    ],
+    "officerNotes": [
+      {
+        "id": "note-1790269619944",
+        "text": "Legal entity title verified against original trade certificate under manual review.",
+        "officer": "Desk Officer (SIH 26100)",
+        "timestamp": "24/9/2026, 10:36:59 pm"
+      },
+      {
+        "id": "note-1790269196774",
+        "text": "Legal entity title verified against original trade certificate under manual review.",
+        "officer": "Desk Officer (SIH 26100)",
+        "timestamp": "24/9/2026, 10:29:56 pm"
+      },
+      {
+        "id": "note-1790267307247",
+        "text": "Legal entity title verified against original trade certificate under manual review.",
+        "officer": "Desk Officer (SIH 26100)",
+        "timestamp": "24/9/2026, 9:58:27 pm"
+      }
+    ],
+    "resolvedFindings": [
+      {
+        "finding": "Legal Entity Name mismatch between PAN card and GST certificate",
+        "resolvedBy": "Desk Officer (SIH 26100)",
+        "remarks": "Discrepancy reviewed and accepted per board resolution",
+        "timestamp": "24/9/2026, 9:58:27 pm"
+      },
+      {
+        "finding": "Legal Entity Name mismatch between PAN card and GST certificate",
+        "resolvedBy": "Desk Officer (SIH 26100)",
+        "remarks": "Discrepancy reviewed and accepted per board resolution",
+        "timestamp": "24/9/2026, 10:29:56 pm"
+      },
+      {
+        "finding": "Legal Entity Name mismatch between PAN card and GST certificate",
+        "resolvedBy": "Desk Officer (SIH 26100)",
+        "remarks": "Discrepancy reviewed and accepted per board resolution",
+        "timestamp": "24/9/2026, 10:36:59 pm"
       }
     ]
   },
