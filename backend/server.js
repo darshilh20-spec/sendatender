@@ -777,8 +777,20 @@ app.post('/api/process-bidder', upload.array('documents'), async (req, res) => {
   }
 });
 
+// Guard to prevent vendor users from executing officer review actions
+function guardOfficerRole(req, res, next) {
+  const role = req.headers['x-user-role'] || req.headers['x-officer-role'];
+  if (role && role.toLowerCase() === 'vendor') {
+    return res.status(403).json({
+      success: false,
+      error: 'Access Denied: Vendor users cannot perform officer review actions.'
+    });
+  }
+  next();
+}
+
 // --- 4. POST /api/decision ---
-app.post('/api/decision', (req, res) => {
+app.post('/api/decision', guardOfficerRole, (req, res) => {
   const { id, decision, officerRemarks = '', officerName = 'Desk Officer (SIH 26100)' } = req.body;
   const bidders = loadBidders();
   const bidder = bidders.find(b => b.id === id);
@@ -810,7 +822,7 @@ app.post('/api/decision', (req, res) => {
 });
 
 // --- 4B. POST /api/officer/note ---
-app.post('/api/officer/note', (req, res) => {
+app.post('/api/officer/note', guardOfficerRole, (req, res) => {
   const { id, note, officerName = 'Desk Officer (SIH 26100)' } = req.body;
   if (!id || !note || !note.trim()) {
     return res.status(400).json({ success: false, error: 'Bidder ID and note text are required.' });
@@ -853,7 +865,7 @@ app.post('/api/officer/note', (req, res) => {
 });
 
 // --- 4C. POST /api/officer/resolve-finding ---
-app.post('/api/officer/resolve-finding', (req, res) => {
+app.post('/api/officer/resolve-finding', guardOfficerRole, (req, res) => {
   const { id, findingIndex, remarks = '', officerName = 'Desk Officer (SIH 26100)' } = req.body;
   const bidders = loadBidders();
   const bidder = bidders.find(b => b.id === id);
@@ -871,6 +883,11 @@ app.post('/api/officer/resolve-finding', (req, res) => {
 
   const resolvedItem = bidder.findings[findingIndex];
   const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  // Remove any conflicting confirmed finding for this item if officer resolves it
+  if (Array.isArray(bidder.confirmedFindings)) {
+    bidder.confirmedFindings = bidder.confirmedFindings.filter(cf => cf.finding !== resolvedItem);
+  }
 
   bidder.resolvedFindings.push({
     finding: resolvedItem,
@@ -891,6 +908,54 @@ app.post('/api/officer/resolve-finding', (req, res) => {
   res.json({
     success: true,
     message: 'Finding marked as reviewed and resolved by officer',
+    bidder
+  });
+});
+
+// --- 4C-2. POST /api/officer/confirm-finding (HUMAN-IN-THE-LOOP DECISION) ---
+app.post('/api/officer/confirm-finding', guardOfficerRole, (req, res) => {
+  const { id, findingIndex, remarks = '', officerName = 'Desk Officer (SIH 26100)' } = req.body;
+  const bidders = loadBidders();
+  const bidder = bidders.find(b => b.id === id);
+  if (!bidder) {
+    return res.status(404).json({ success: false, error: `Bidder with ID ${id} not found` });
+  }
+
+  if (typeof findingIndex !== 'number' || findingIndex < 0 || findingIndex >= (bidder.findings || []).length) {
+    return res.status(400).json({ success: false, error: 'Invalid finding index.' });
+  }
+
+  if (!Array.isArray(bidder.confirmedFindings)) {
+    bidder.confirmedFindings = [];
+  }
+
+  const confirmedItem = bidder.findings[findingIndex];
+  const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  // Remove any conflicting resolved finding for this item if officer confirms discrepancy
+  if (Array.isArray(bidder.resolvedFindings)) {
+    bidder.resolvedFindings = bidder.resolvedFindings.filter(rf => rf.finding !== confirmedItem);
+  }
+
+  bidder.confirmedFindings.push({
+    finding: confirmedItem,
+    confirmedBy: officerName,
+    remarks: remarks.trim() || 'Discrepancy reviewed and confirmed by human officer',
+    timestamp
+  });
+
+  bidder.audit.unshift({
+    action: 'Discrepancy Reviewed & Confirmed',
+    remarks: `AI Finding Confirmed: "${confirmedItem.slice(0, 60)}" - Officer Note: ${remarks || 'Discrepancy upheld'}`,
+    timestamp,
+    user: officerName
+  });
+
+  saveBidders(bidders);
+
+  res.json({
+    success: true,
+    message: 'AI Finding reviewed and confirmed by officer',
     bidder
   });
 });

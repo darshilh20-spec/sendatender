@@ -151,7 +151,24 @@ const I18N = {
     btnAddNote: 'Add Review Note',
     notePlaceholder: 'Enter official review remarks, observations, or directives...',
     btnResolveFinding: 'Resolve Discrepancy',
+    btnConfirmFinding: 'Confirm Finding',
     findingResolvedLabel: '✓ Resolved by Officer',
+    findingConfirmedLabel: '⚠️ Confirmed by Officer',
+    viewEvidenceBtn: 'View Evidence',
+    btnClose: 'Close',
+    aiFindingBadge: '🤖 AI Verification',
+    aiFindingSub: 'Automated document analysis / finding',
+    humanDecisionBadge: '🧑‍⚖️ Human Decision',
+    humanDecisionSub: 'Decision recorded by authorized officer',
+    evidenceModalTitle: 'Evidence & Statutory Verification Inspector',
+    colField: 'Verification Field',
+    colExtracted: 'Uploaded / Declared',
+    colRegistry: 'Registry Record',
+    colStatus: 'Match Status',
+    officerReviewPanelTitle: 'Officer Review & Decision',
+    officerActionHeading: 'Officer Action',
+    saveDecisionBtn: 'Save Decision',
+    verificationSourceLabel: 'Verification Source',
     aiVerificationHeading: 'AI Statutory Verification Findings',
     officerDeskHeading: 'Officer Decision & Discretionary Review',
 
@@ -188,6 +205,37 @@ const I18N = {
     statutoryPan: 'PAN',
     statutoryUdyam: 'Udyam',
     statutoryMca: 'MCA',
+
+    // Command Center & Active Tender Snapshot (Part 1)
+    ccActiveTenderBadge: 'ACTIVE TENDER SNAPSHOT',
+    btnViewTenderReqs: 'View Tender Requirements',
+    btnVendorPortal: 'Vendor Portal',
+    btnOfficerReview: 'Officer Review',
+    btnBidderComparison: 'Bidder Comparison',
+    ccTotalBidders: 'Total Bidders',
+    ccDemoArchetypes: 'Evaluated Archetypes',
+    ccReadyBidders: 'Bidders Ready',
+    ccReadySub: '100% Verified Compliant',
+    ccReviewBidders: 'Requires Review',
+    ccReviewSub: 'Discrepancy Flagged',
+    ccNotReadyBidders: 'Not Ready / Blocked',
+    ccNotReadySub: 'Missing / Expired / Suspended',
+    ccVerifiedDocs: 'Verified Documents',
+    ccVerifiedDocsSub: 'Across All Submissions',
+    tenderReqsModalTitle: 'Tender Specifications & Canonical Statutory Requirements',
+    canonicalReqsHeading: '8 Canonical Statutory Requirements (SIH PS 26100)',
+    btnProceedUpload: 'Proceed to Vendor Upload →',
+
+    // Verification Matrix (Part 2)
+    vmTitle: 'Statutory Verification Matrix',
+    vmSub: 'Comprehensive tender requirement to document evidence mapping (SIH PS 26100)',
+    vmThRequirement: 'TENDER REQUIREMENT',
+    vmThDoc: 'REQUIRED DOCUMENT',
+    vmThSubmitted: 'SUBMITTED',
+    vmThVerification: 'VERIFICATION CHECK',
+    vmThStatus: 'STATUS',
+    vmThEvidence: 'EVIDENCE',
+    vmBtnViewEvidence: 'View',
 
     // Matrix Checks
     checkGst: 'GSTN Registration Check',
@@ -387,7 +435,24 @@ const I18N = {
     btnAddNote: 'समीक्षा टिप्पणी जोड़ें',
     notePlaceholder: 'आधिकारिक समीक्षा टिप्पणी, टिप्पणियां या निर्देश दर्ज करें...',
     btnResolveFinding: 'विसंगति सुलझाएं',
+    btnConfirmFinding: 'विसंगति की पुष्टि करें',
     findingResolvedLabel: '✓ अधिकारी द्वारा सुलझाया गया',
+    findingConfirmedLabel: '⚠️ अधिकारी द्वारा पुष्टि की गई',
+    viewEvidenceBtn: 'साक्ष्य देखें',
+    btnClose: 'बंद करें',
+    aiFindingBadge: '🤖 एआई सत्यापन',
+    aiFindingSub: 'स्वचालित दस्तावेज़ विश्लेषण / निष्कर्ष',
+    humanDecisionBadge: '🧑‍⚖️ मानवीय निर्णय',
+    humanDecisionSub: 'अधिकृत अधिकारी द्वारा दर्ज निर्णय',
+    evidenceModalTitle: 'साक्ष्य एवं वैधानिक सत्यापन निरीक्षक',
+    colField: 'सत्यापन क्षेत्र',
+    colExtracted: 'अपलोड / घोषित',
+    colRegistry: 'रजिस्ट्री रिकॉर्ड',
+    colStatus: 'मिलान स्थिति',
+    officerReviewPanelTitle: 'अधिकारी समीक्षा एवं निर्णय',
+    officerActionHeading: 'अधिकारी कार्रवाई',
+    saveDecisionBtn: 'निर्णय सहेजें',
+    verificationSourceLabel: 'सत्यापन स्रोत',
     aiVerificationHeading: 'एआई वैधानिक सत्यापन निष्कर्ष',
     officerDeskHeading: 'अधिकारी निर्णय एवं विवेकाधीन समीक्षा',
 
@@ -424,6 +489,37 @@ const I18N = {
     statutoryPan: 'PAN',
     statutoryUdyam: 'उद्यम',
     statutoryMca: 'MCA',
+
+    // Command Center & Active Tender Snapshot (Part 1)
+    ccActiveTenderBadge: 'सक्रिय निविदा स्नैपशॉट',
+    btnViewTenderReqs: 'निविदा आवश्यकताएं देखें',
+    btnVendorPortal: 'विक्रेता पोर्टल',
+    btnOfficerReview: 'अधिकारी समीक्षा',
+    btnBidderComparison: 'बोलीदाता तुलना',
+    ccTotalBidders: 'कुल बोलीदाता',
+    ccDemoArchetypes: 'मूल्यांकित आर्केटाइप्स',
+    ccReadyBidders: 'बोलीदाता तैयार',
+    ccReadySub: '100% सत्यापित अनुपालन',
+    ccReviewBidders: 'समीक्षा आवश्यक',
+    ccReviewSub: 'विसंगति पाई गई',
+    ccNotReadyBidders: 'तैयार नहीं / अवरुद्ध',
+    ccNotReadySub: 'लापता / समाप्त / निलंबित',
+    ccVerifiedDocs: 'सत्यापित दस्तावेज़',
+    ccVerifiedDocsSub: 'सभी प्रस्तुतियों में',
+    tenderReqsModalTitle: 'निविदा विनिर्देश एवं वैधानिक आवश्यकताएं',
+    canonicalReqsHeading: '8 वैधानिक आवश्यकताएं (SIH PS 26100)',
+    btnProceedUpload: 'विक्रेता अपलोड हेतु आगे बढ़ें →',
+
+    // Verification Matrix (Part 2)
+    vmTitle: 'वैधानिक सत्यापन मैट्रिक्स',
+    vmSub: 'निविदा आवश्यकता से दस्तावेज़ साक्ष्य का संपूर्ण मिलान (SIH PS 26100)',
+    vmThRequirement: 'निविदा आवश्यकता',
+    vmThDoc: 'आवश्यक दस्तावेज़',
+    vmThSubmitted: 'प्रस्तुत',
+    vmThVerification: 'सत्यापन जांच',
+    vmThStatus: 'स्थिति',
+    vmThEvidence: 'साक्ष्य',
+    vmBtnViewEvidence: 'देखें',
 
     // Matrix Checks
     checkGst: 'GSTN पंजीकरण जांच',
@@ -623,7 +719,24 @@ const I18N = {
     btnAddNote: 'आढावा नोंद जोडा',
     notePlaceholder: 'अधिकृत आढावा शेरा, निरीक्षणे किंवा सूचना प्रविष्ट करा...',
     btnResolveFinding: 'तफावत सोडवा',
+    btnConfirmFinding: 'तफावतीची पुष्टी करा',
     findingResolvedLabel: '✓ अधिकाऱ्याद्वारे सोडवले',
+    findingConfirmedLabel: '⚠️ अधिकाऱ्याद्वारे पुष्टी केली',
+    viewEvidenceBtn: 'पुरावा पहा',
+    btnClose: 'बंद करा',
+    aiFindingBadge: '🤖 एआय पडताळणी',
+    aiFindingSub: 'स्वयंचलित दस्तऐवज विश्लेषण / निष्कर्ष',
+    humanDecisionBadge: '🧑‍⚖️ मानवी निर्णय',
+    humanDecisionSub: 'अधिकृत अधिकाऱ्याने नोंदवलेला निर्णय',
+    evidenceModalTitle: 'पुरावा व वैधानिक पडताळणी निरीक्षक',
+    colField: 'पडताळणी घटक',
+    colExtracted: 'अपलोड / घोषित',
+    colRegistry: 'नोंदणी वहीतील नोंद',
+    colStatus: 'तपासणी स्थिती',
+    officerReviewPanelTitle: 'अधिकारी आढावा व निर्णय',
+    officerActionHeading: 'अधिकारी कृती',
+    saveDecisionBtn: 'निर्णय जतन करा',
+    verificationSourceLabel: 'पडताळणी स्रोत',
     aiVerificationHeading: 'एआय वैधानिक पडताळणी निष्कर्ष',
     officerDeskHeading: 'अधिकारी निर्णय व स्वेच्छाधिकार आढावा',
 
@@ -660,6 +773,37 @@ const I18N = {
     statutoryPan: 'PAN',
     statutoryUdyam: 'उद्यम',
     statutoryMca: 'MCA',
+
+    // Command Center & Active Tender Snapshot (Part 1)
+    ccActiveTenderBadge: 'सक्रिय निविदा स्नॅपशॉट',
+    btnViewTenderReqs: 'निविदा अटी व आवश्यकता पहा',
+    btnVendorPortal: 'विक्रेता पोर्टल',
+    btnOfficerReview: 'अधिकारी आढावा',
+    btnBidderComparison: 'बोलीदार तुलना',
+    ccTotalBidders: 'एकूण बोलीदार',
+    ccDemoArchetypes: 'मूल्यांकन केलेले आर्केटाईप्स',
+    ccReadyBidders: 'बोलीदार सज्ज',
+    ccReadySub: '१००% पडताळणी पूर्ण',
+    ccReviewBidders: 'आढावा आवश्यक',
+    ccReviewSub: 'तफावत आढळली',
+    ccNotReadyBidders: 'सज्ज नाही / अडथळे',
+    ccNotReadySub: 'गहाळ / मुदत संपलेली / निलंबित',
+    ccVerifiedDocs: 'पडताळलेले दस्तऐवज',
+    ccVerifiedDocsSub: 'सर्व सादरीकरणांमध्ये',
+    tenderReqsModalTitle: 'निविदा तपशील व वैधानिक आवश्यकता',
+    canonicalReqsHeading: '८ वैधानिक आवश्यकता (SIH PS 26100)',
+    btnProceedUpload: 'विक्रेता अपलोडकडे जा →',
+
+    // Verification Matrix (Part 2)
+    vmTitle: 'वैधानिक पडताळणी मॅट्रिक्स',
+    vmSub: 'निविदा आवश्यकता आणि दस्तऐवज पुरावा यांचा थेट मेळ (SIH PS 26100)',
+    vmThRequirement: 'निविदा आवश्यकता',
+    vmThDoc: 'आवश्यक दस्तऐवज',
+    vmThSubmitted: 'सादर केले',
+    vmThVerification: 'पडताळणी तपासणी',
+    vmThStatus: 'स्थिती',
+    vmThEvidence: 'पुरावा',
+    vmBtnViewEvidence: 'पहा',
 
     // Matrix Checks
     checkGst: 'GSTN नोंदणी तपासणी',
@@ -1076,6 +1220,19 @@ function closeOfficerModal() {
 }
 window.closeOfficerModal = closeOfficerModal;
 
+// Tender Specifications & Canonical Requirements Modal Management (Part 1 & 2)
+function openTenderRequirementsModal() {
+  const modal = $('#tender-reqs-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+window.openTenderRequirementsModal = openTenderRequirementsModal;
+
+function closeTenderRequirementsModal() {
+  const modal = $('#tender-reqs-modal');
+  if (modal) modal.classList.add('hidden');
+}
+window.closeTenderRequirementsModal = closeTenderRequirementsModal;
+
 async function handleOfficerLogin() {
   const officerId = $('#officer-id').value.trim();
   const password = $('#officer-pass').value;
@@ -1207,31 +1364,323 @@ let drop = $('#dropzone');
 ['dragleave', 'drop'].forEach(x => drop.addEventListener(x, e => { e.preventDefault(); drop.classList.remove('drag'); }));
 drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 
-// Helper: Render multi-stage reasoning stages (EXTRACTED -> FORMAT -> CROSS-MATCH -> MOCK REGISTRY -> FINAL)
-function renderMultiStageEvidence(evidenceText) {
-  if (!evidenceText) return '';
-  const parts = evidenceText.split(' | ');
-  if (parts.length >= 3) {
-    return `
-      <div class="evidence-pipeline">
-        ${parts.map((part, idx) => {
-          const isFinal = idx === parts.length - 1;
-          const isPass = part.includes('PASS') || part.includes('ACTIVE') || part.includes('VALID');
-          const isFail = part.includes('FAIL') || part.includes('SUSPENDED') || part.includes('REJECTED');
-          const chipClass = isFinal 
-            ? (isPass ? 'final-pass' : isFail ? 'final-fail' : 'final-review') 
-            : 'stage-step';
-          return `<span class="pipeline-chip ${chipClass}">${esc(part)}</span>${idx < parts.length - 1 ? '<span class="pipeline-arrow">→</span>' : ''}`;
-        }).join('')}
-      </div>
-    `;
+// Canonical mock registry for deterministic evidence comparison
+const CANONICAL_MOCK_REGISTRY = {
+  gst: {
+    '27AAQCA1234F1ZP': { legalName: 'Aarav Industrial Solutions Pvt. Ltd.', pan: 'AAQCA1234F', state: 'Maharashtra', status: 'ACTIVE' },
+    '29AABCN5521K1ZQ': { legalName: 'NexGen Infra Systems LLP', pan: 'AABCN5521K', state: 'Karnataka', status: 'ACTIVE' },
+    '33AABCK8899P1ZM': { legalName: 'Kaveri Steel & Forgings Ltd.', pan: 'AABCK8899P', state: 'Tamil Nadu', status: 'ACTIVE' },
+    '07AAACS9988G1ZQ': { legalName: 'Shree Krishna Heavy Engineering Private Limited', pan: 'AAACS9988G', state: 'Delhi', status: 'ACTIVE' },
+    '06AAACV1298E1Z4': { legalName: 'Vertex Global Supplies Ltd.', pan: 'AAACV1298E', state: 'Haryana', status: 'SUSPENDED' }
+  },
+  pan: {
+    'AAQCA1234F': { name: 'Aarav Industrial Solutions Pvt. Ltd.', category: 'Company', status: 'VALID' },
+    'AABCN5521K': { name: 'NexGen Infra Systems LLP', category: 'LLP', status: 'VALID' },
+    'AABCK8899P': { name: 'Kaveri Steel & Forgings Ltd.', category: 'Company', status: 'VALID' },
+    'AAACS9988G': { name: 'SK Heavy Eng Works Sole Prop', category: 'Individual / Prop', status: 'VALID' },
+    'AAACV1298E': { name: 'Vertex Global Supplies Ltd.', category: 'Company', status: 'VALID' }
+  },
+  udyam: {
+    'UDYAM-MH-01-0012345': { enterpriseName: 'Aarav Industrial Solutions Pvt. Ltd.', status: 'ACTIVE' },
+    'UDYAM-TN-02-0098765': { enterpriseName: 'Kaveri Steel & Forgings Ltd.', status: 'ACTIVE' },
+    'UDYAM-DL-01-0044556': { enterpriseName: 'Shree Krishna Heavy Engineering', status: 'ACTIVE' }
+  },
+  mca: {
+    'U28100MH2018PTC310234': { companyName: 'Aarav Industrial Solutions Pvt. Ltd.', status: 'ACTIVE', roc: 'ROC Mumbai' },
+    'L27100TN1995PLC031245': { companyName: 'Kaveri Steel & Forgings Ltd.', status: 'ACTIVE', roc: 'ROC Chennai' },
+    'U29100DL2015PTC284910': { companyName: 'Shree Krishna Heavy Engineering Private Limited', status: 'ACTIVE', roc: 'ROC Delhi' }
   }
-  return `<p class="evidence-text">${esc(evidenceText)}</p>`;
+};
+
+// Map actual finding string / bidder data to factual evidence comparison
+function getFindingEvidence(bidder, findingStr) {
+  if (!bidder) return null;
+  const f = (findingStr || '').toLowerCase();
+  const m = bidder.matrix || {};
+
+  if (f.includes('gst') || f.includes('07aaacs') || f.includes('06aaacv')) {
+    const reg = CANONICAL_MOCK_REGISTRY.gst[bidder.gst] || null;
+    return {
+      title: 'GST Registration Verification',
+      source: 'MOCK GSTN REGISTRY — SIH DEMO',
+      document: 'GST Registration Certificate (Form GST REG-06)',
+      declaredGst: bidder.gst || 'N/A',
+      declaredEntity: bidder.name || 'Declared Vendor',
+      registryGst: reg ? bidder.gst : (bidder.gst || 'Not Found'),
+      registryEntity: reg ? reg.legalName : 'Record Not Found in Mock Registry',
+      registryStatus: reg ? reg.status : 'NOT_FOUND',
+      comparison: [
+        { field: 'GSTIN', extracted: bidder.gst || 'N/A', registry: reg ? bidder.gst : 'Not Found', match: Boolean(reg) },
+        { field: 'Legal Entity', extracted: bidder.name, registry: reg ? reg.legalName : 'N/A', match: Boolean(reg && reg.legalName.toLowerCase().replace(/[^a-z0-9]/g, '') === bidder.name.toLowerCase().replace(/[^a-z0-9]/g, '')) },
+        { field: 'Registration Status', extracted: 'Active (Claimed)', registry: reg ? reg.status : 'NOT_FOUND', match: Boolean(reg && reg.status === 'ACTIVE') }
+      ],
+      aiFinding: m.gst?.evidence || findingStr,
+      aiReason: reg && reg.status === 'SUSPENDED' 
+        ? 'GSTIN status is marked as SUSPENDED in government records.' 
+        : (reg && reg.legalName !== bidder.name ? 'Declared entity name differs from official GST registry record.' : 'GSTIN format or registration record requires verification.')
+    };
+  }
+
+  if (f.includes('pan') || f.includes('sole prop') || f.includes('legal entity name mismatch')) {
+    const regPan = CANONICAL_MOCK_REGISTRY.pan[bidder.pan] || null;
+    const regGst = CANONICAL_MOCK_REGISTRY.gst[bidder.gst] || null;
+    return {
+      title: 'PAN Identity & Entity Name Verification',
+      source: 'MOCK NSDL / INCOME TAX REGISTRY — SIH DEMO',
+      document: 'Permanent Account Number (PAN) Card & Registry Feed',
+      declaredGst: bidder.gst || 'N/A',
+      declaredEntity: bidder.name || 'Declared Entity',
+      registryGst: bidder.pan || 'N/A',
+      registryEntity: regPan ? regPan.name : (bidder.pan ? 'Name on PAN records differs' : 'N/A'),
+      registryStatus: regPan ? regPan.status : 'VALID',
+      comparison: [
+        { field: 'PAN Number', extracted: bidder.pan || 'N/A', registry: bidder.pan || 'N/A', match: true },
+        { field: 'PAN Registered Entity', extracted: bidder.name, registry: regPan ? regPan.name : 'SK Heavy Eng Works Sole Prop', match: false },
+        { field: 'GST Title vs PAN Title', extracted: regGst ? regGst.legalName : bidder.name, registry: regPan ? regPan.name : 'SK Heavy Eng Works Sole Prop', match: false }
+      ],
+      aiFinding: m.pan?.evidence || findingStr,
+      aiReason: 'PAN records "SK Heavy Eng Works Sole Prop" (Sole Proprietorship) whereas GST certificate and declaration record "Shree Krishna Heavy Engineering Private Limited" (Private Limited Company).'
+    };
+  }
+
+  if (f.includes('bank') || f.includes('passbook')) {
+    return {
+      title: 'Bank Account & Trade Name Cross-Match',
+      source: 'MOCK NPCI / E-MANDATE REGISTRY — SIH DEMO',
+      document: 'Bank Passbook / Cancelled Cheque Leaf',
+      declaredGst: bidder.gst || 'N/A',
+      declaredEntity: bidder.name || 'Shree Krishna Heavy Engineering',
+      registryGst: 'A/C Validated',
+      registryEntity: 'SK Heavy Engineering Works',
+      registryStatus: 'ACTIVE',
+      comparison: [
+        { field: 'Account Holder Title', extracted: bidder.name, registry: 'SK Heavy Engineering Works', match: false },
+        { field: 'IFSC Code Match', extracted: 'PUNB0024500 (Punjab National Bank)', registry: 'PUNB0024500 (Verified)', match: true }
+      ],
+      aiFinding: m.documents?.evidence || findingStr,
+      aiReason: 'Bank account passbook was issued to alternate trade name ("SK Heavy Engineering Works") rather than declared corporate legal entity.'
+    };
+  }
+
+  if (f.includes('expired') || f.includes('lapsed') || f.includes('tax clearance')) {
+    return {
+      title: 'Tax Clearance & Quality Certificate Validity Inspection',
+      source: 'MOCK REVENUE & STATUTORY COMPLIANCE PORTAL — SIH DEMO',
+      document: 'Tax Clearance Certificate / ISO Accreditation',
+      declaredGst: bidder.gst || 'N/A',
+      declaredEntity: bidder.name || 'Declared Vendor',
+      registryGst: 'Certificate #TC-2023-9912',
+      registryEntity: bidder.name,
+      registryStatus: 'EXPIRED (3 Months Ago)',
+      comparison: [
+        { field: 'Certificate Issue Date', extracted: '15-Jan-2023', registry: '15-Jan-2023', match: true },
+        { field: 'Validity Expiration', extracted: '14-Jan-2026', registry: '14-Jan-2026 (Lapsed)', match: false },
+        { field: 'Current Status', extracted: 'Claimed Active', registry: 'EXPIRED', match: false }
+      ],
+      aiFinding: findingStr,
+      aiReason: 'Certificate validity lapsed 3 months prior to bid submission; renewal copy was not uploaded.'
+    };
+  }
+
+  if (f.includes('udyam') || f.includes('msme')) {
+    const regUdyam = CANONICAL_MOCK_REGISTRY.udyam[bidder.udyam] || null;
+    return {
+      title: 'Udyam MSME Registry Verification',
+      source: 'MOCK UDYAM MSME REGISTRY — SIH DEMO',
+      document: 'Udyam Registration Certificate',
+      declaredGst: bidder.udyam || 'N/A',
+      declaredEntity: bidder.name,
+      registryGst: bidder.udyam || 'NOT_FOUND',
+      registryEntity: regUdyam ? regUdyam.enterpriseName : 'Not Registered',
+      registryStatus: regUdyam ? regUdyam.status : 'MISSING',
+      comparison: [
+        { field: 'Udyam Registration Number', extracted: bidder.udyam || 'Missing', registry: regUdyam ? bidder.udyam : 'Not Found', match: Boolean(regUdyam) },
+        { field: 'Enterprise Legal Name', extracted: bidder.name, registry: regUdyam ? regUdyam.enterpriseName : 'N/A', match: Boolean(regUdyam) }
+      ],
+      aiFinding: findingStr,
+      aiReason: bidder.udyam ? 'Udyam certificate details verified.' : 'No Udyam MSME registration proof was detected in the upload package.'
+    };
+  }
+
+  if (f.includes('mca') || f.includes('cin') || f.includes('incorporation')) {
+    const regMca = CANONICAL_MOCK_REGISTRY.mca[bidder.mca] || null;
+    return {
+      title: 'MCA21 Incorporation & Corporate Identity Verification',
+      source: 'MOCK MCA21 PORTAL — SIH DEMO',
+      document: 'MCA Certificate of Incorporation (CIN / LLPIN)',
+      declaredGst: bidder.mca || 'N/A',
+      declaredEntity: bidder.name,
+      registryGst: bidder.mca || (regMca ? bidder.mca : 'NOT_FOUND'),
+      registryEntity: regMca ? regMca.companyName : (bidder.mca ? 'Entity Scrutiny Flagged' : 'Not Registered'),
+      registryStatus: regMca ? regMca.status : (bidder.mca ? 'UNDER_SCRUTINY' : 'MISSING'),
+      comparison: [
+        { field: 'Corporate Identity (CIN/LLP)', extracted: bidder.mca || 'Missing', registry: regMca ? bidder.mca : (bidder.mca || 'Not Found'), match: Boolean(regMca) },
+        { field: 'Registered Company Name', extracted: bidder.name, registry: regMca ? regMca.companyName : 'Discrepancy / Review', match: Boolean(regMca && regMca.companyName.toLowerCase().replace(/[^a-z0-9]/g, '') === bidder.name.toLowerCase().replace(/[^a-z0-9]/g, '')) },
+        { field: 'ROC Jurisdiction & Status', extracted: 'Active Claimed', registry: regMca ? (regMca.roc + ' · ACTIVE') : 'Flagged for Officer Review', match: Boolean(regMca) }
+      ],
+      aiFinding: m.mca?.evidence || findingStr,
+      aiReason: regMca ? 'MCA21 corporate filing and standing verified.' : 'Company registration details or ROC state code require human officer scrutiny.'
+    };
+  }
+
+  if (f.includes('itr') || f.includes('income tax')) {
+    const isMissing = m.documents?.status === 'MISSING' || f.includes('missing') || f.includes('not attached');
+    return {
+      title: '3-Year Audited Income Tax Returns (ITR) Verification',
+      source: 'MOCK CBDT E-FILING PORTAL — SIH DEMO',
+      document: 'Audited ITR Acknowledgements (FY 2022-23, 2023-24, 2024-25)',
+      declaredGst: bidder.pan || 'N/A',
+      declaredEntity: bidder.name,
+      registryGst: bidder.pan || 'N/A',
+      registryEntity: bidder.name,
+      registryStatus: isMissing ? 'MISSING' : 'VERIFIED',
+      comparison: [
+        { field: 'Assessment Year FY 2022-23', extracted: isMissing ? 'Not Found' : 'Verified (Form ITR-6)', registry: isMissing ? 'Pending' : 'Filed · Acknowledgement Valid', match: !isMissing },
+        { field: 'Assessment Year FY 2023-24', extracted: isMissing ? 'Not Found' : 'Verified (Form ITR-6)', registry: isMissing ? 'Pending' : 'Filed · Acknowledgement Valid', match: !isMissing },
+        { field: 'Assessment Year FY 2024-25', extracted: isMissing ? 'Missing' : 'Verified (Form ITR-6)', registry: isMissing ? 'Unfiled / Missing' : 'Filed · Acknowledgement Valid', match: !isMissing }
+      ],
+      aiFinding: isMissing ? 'Mandatory Audited ITR for FY 2024-25 not attached in submission package.' : 'All 3 consecutive years of audited Income Tax Returns verified.',
+      aiReason: isMissing ? 'Statutory requirement for 3-Year Audited ITR incomplete; FY 2024-25 missing.' : 'Financial capability demonstrated via audited returns.'
+    };
+  }
+
+  if (f.includes('emd') || f.includes('guarantee') || f.includes('waiver')) {
+    const isLapsed = f.includes('expired') || (m.documents?.evidence || '').toLowerCase().includes('emd expired');
+    const isMsmeExempt = bidder.udyam && (CANONICAL_MOCK_REGISTRY.udyam[bidder.udyam] || m.udyam?.status === 'PASS');
+    return {
+      title: 'Earnest Money Deposit (EMD) / Exemption Verification',
+      source: 'MOCK SFMS / BANK GUARANTEE VERIFICATION — SIH DEMO',
+      document: 'Bank Guarantee Confirmation / MSME EMD Exemption Claim',
+      declaredGst: bidder.gst || 'N/A',
+      declaredEntity: bidder.name,
+      registryGst: isMsmeExempt ? (bidder.udyam || 'N/A') : 'BG #BG-2026-VALV-991',
+      registryEntity: bidder.name,
+      registryStatus: isLapsed ? 'EXPIRED' : 'VALID',
+      comparison: [
+        { field: 'EMD Security Mode', extracted: isMsmeExempt ? 'MSME Udyam Exemption' : 'Bank Guarantee (₹ 2,50,000)', registry: isMsmeExempt ? 'Exemption Validated' : 'SFMS Confirmed', match: !isLapsed },
+        { field: 'Guarantee Validity', extracted: isLapsed ? 'Expired prior to bid' : 'Valid through 31-Aug-2026', registry: isLapsed ? 'EXPIRED' : 'ACTIVE', match: !isLapsed },
+        { field: 'Verification Result', extracted: isLapsed ? 'Lapsed Bank Guarantee' : 'Security Criteria Satisfied', registry: isLapsed ? 'FAIL' : 'PASS', match: !isLapsed }
+      ],
+      aiFinding: isLapsed ? 'EMD Bank Guarantee expired prior to bid submission date.' : (isMsmeExempt ? 'EMD waived under MSME procurement policy (Valid Udyam).' : 'EMD Bank Guarantee verified active and enforceable.'),
+      aiReason: isLapsed ? 'Tender security expired; bidder ineligible without revalidation or MSME exemption.' : 'Tender security requirement fulfilled.'
+    };
+  }
+
+  if (f.includes('nit') || f.includes('boq') || f.includes('tender doc')) {
+    return {
+      title: 'Signed NIT/RFP Acceptance & Priced BOQ Verification',
+      source: 'MOCK GEM / PROCUREMENT PORTAL — SIH DEMO',
+      document: 'Notice Inviting Tender & Schedule of Quantities (BOQ)',
+      declaredGst: bidder.gst || 'N/A',
+      declaredEntity: bidder.name,
+      registryGst: 'Tender #S26-104',
+      registryEntity: bidder.name,
+      registryStatus: 'PASS',
+      comparison: [
+        { field: 'NIT Terms Acceptance', extracted: 'Digitally Signed & Unconditional', registry: 'Terms Accepted', match: true },
+        { field: 'Priced BOQ Format', extracted: 'Standard Commercial Schedule', registry: 'Format Compliant', match: true },
+        { field: 'Authorized Signatory', extracted: bidder.name, registry: 'Authorized Signatory Matched', match: true }
+      ],
+      aiFinding: 'Signed NIT acknowledgement and priced BOQ verified with zero discrepancies.',
+      aiReason: 'Mandatory statutory tender acceptance and commercial schedule properly uploaded.'
+    };
+  }
+
+  // Fallback for general finding
+  return {
+    title: 'Statutory Verification Finding',
+    source: 'MOCK GOVERNMENT CHECK — SIH DEMO',
+    document: 'Uploaded Tender Package Documents',
+    declaredGst: bidder.gst || 'N/A',
+    declaredEntity: bidder.name,
+    registryGst: bidder.gst || 'N/A',
+    registryEntity: bidder.name,
+    registryStatus: 'FLAGGED FOR REVIEW',
+    comparison: [
+      { field: 'Verification Check', extracted: findingStr, registry: 'Flagged by AI Engine', match: false }
+    ],
+    aiFinding: findingStr,
+    aiReason: 'Finding flagged during multi-stage verification (Extraction → Format → Cross-Match → Registry Lookup).'
+  };
 }
 
-// ========================================================
-// EXPLAIN WHY: ACCURATE DYNAMIC SCORING RATIONALE ENGINE
-// ========================================================
+// Show Evidence Modal with factual comparison (Supports finding index OR statutory key/string)
+function showEvidenceModal(bidderId, findingIndexOrKey) {
+  const b = bidders.find(x => x.id === bidderId);
+  if (!b) return;
+  let findingStr = 'Statutory Check';
+  if (typeof findingIndexOrKey === 'number') {
+    findingStr = (b.findings && b.findings[findingIndexOrKey]) ? b.findings[findingIndexOrKey] : 'Statutory Check';
+  } else if (typeof findingIndexOrKey === 'string') {
+    findingStr = findingIndexOrKey;
+  }
+  const evData = getFindingEvidence(b, findingStr);
+  if (!evData) return;
+
+  const content = $('#evidence-modal-content');
+  if (!content) return;
+
+  content.innerHTML = `
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:12px; font-weight:700; color:#0f172a;">${esc(evData.title)}</span>
+        <span class="badge ${evData.registryStatus.includes('PASS') || evData.registryStatus.includes('ACTIVE') || evData.registryStatus.includes('VALID') ? 'pass' : (evData.registryStatus.includes('SUSPENDED') || evData.registryStatus.includes('EXPIRED') ? 'fail' : 'review')}" style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:4px;">
+          ${esc(evData.registryStatus)}
+        </span>
+      </div>
+      <div style="font-size:11px; color:#475569;">
+        <b>Document Checked:</b> ${esc(evData.document)}<br>
+        <b>Verification Source:</b> <span style="color:#0369a1; font-weight:600;">${esc(evData.source)}</span>
+      </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div style="margin-bottom:14px;">
+      <h4 style="font-size:11px; letter-spacing:0.5px; text-transform:uppercase; margin:0 0 8px 0; color:#475569;">${t('colField')} & Side-by-Side Comparison</h4>
+      <table style="width:100%; border-collapse:collapse; font-size:11px;">
+        <thead>
+          <tr style="background:#f1f5f9; text-align:left; border-bottom:1px solid #cbd5e1;">
+            <th style="padding:6px 8px;">${t('colField')}</th>
+            <th style="padding:6px 8px;">${t('colExtracted')}</th>
+            <th style="padding:6px 8px;">${t('colRegistry')}</th>
+            <th style="padding:6px 8px; text-align:center;">${t('colStatus')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${evData.comparison.map(row => `
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:6px 8px; font-weight:600; color:#1e293b;">${esc(row.field)}</td>
+              <td style="padding:6px 8px; color:#334155;">${esc(row.extracted)}</td>
+              <td style="padding:6px 8px; color:#334155;">${esc(row.registry)}</td>
+              <td style="padding:6px 8px; text-align:center;">
+                <span style="font-weight:800; color:${row.match ? '#16a34a' : '#dc2626'};">
+                  ${row.match ? '✓ MATCH' : '⚠ MISMATCH'}
+                </span>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- AI EXPLANATION & RATIONALE -->
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 12px; margin-bottom:10px;">
+      <b style="font-size:11px; color:#1e40af; display:block; margin-bottom:4px;">🤖 AI Verification Finding & Rationale:</b>
+      <p style="font-size:11px; color:#1e3a8a; margin:0 0 6px 0;">${esc(evData.aiFinding)}</p>
+      <div style="font-size:10.5px; color:#2563eb;"><b>Reason for Flag:</b> ${esc(evData.aiReason)}</div>
+    </div>
+  `;
+
+  const modal = $('#evidence-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+window.showEvidenceModal = showEvidenceModal;
+
+function closeEvidenceModal() {
+  const modal = $('#evidence-modal');
+  if (modal) modal.classList.add('hidden');
+}
+window.closeEvidenceModal = closeEvidenceModal;
 function generateExplainWhy(b, lang = 'en') {
   if (!b) return '';
   const isHi = lang === 'hi';
@@ -1372,14 +1821,48 @@ function generateExplainWhy(b, lang = 'en') {
     }
   }
 
-  // Combine reasons
-  const prefix = isMr
-    ? (b.score < 60 ? 'गंभीर जोखीम स्कोअरचे कारण: ' : 'स्कोअरिंग विश्लेषण: ')
-    : isHi 
-      ? (b.score < 60 ? 'गंभीर जोखिम स्कोर का कारण: ' : 'स्कोरिंग विश्लेषण: ')
-      : (b.score < 60 ? 'Critical risk rationale: ' : 'Scoring rationale: ');
+  // Combine reasons and distinguish Why Flagged vs What Evidence Caused the Flag
+  let whyFlagged = [];
+  let evidenceDetail = [];
 
-  return prefix + reasons.join(isMr ? '; ' : isHi ? '; ' : '; ');
+  if (gstSuspended) {
+    whyFlagged.push(isMr ? 'कर प्राधिकरणाकडून GSTIN नोंदणी निलंबित (Suspended) आढळली.' : isHi ? 'कर प्राधिकारियों द्वारा GSTIN को निलंबित (Suspended) पाया गया।' : 'GST registration was detected as SUSPENDED in mock registry records.');
+    evidenceDetail.push(isMr ? 'काढलेला GSTIN 06AAACV1298E1Z4 अनुपालन न केल्यामुळे निलंबित स्थितीत आहे.' : isHi ? 'निकाला गया GSTIN 06AAACV1298E1Z4 गैर-अनुपालन के कारण निलंबित स्थिति में है।' : 'Extracted GSTIN 06AAACV1298E1Z4 is recorded in SUSPENDED status in the GST registry.');
+  }
+  if (gstUnknown) {
+    whyFlagged.push(isMr ? 'काढलेला GSTIN अधिकृत शासकीय मॉक नोंदणी पुस्तिकेत आढळला नाही.' : isHi ? 'निकाला गया GSTIN आधिकारिक मॉक रजिस्ट्री में नहीं मिला।' : 'Extracted GSTIN format is valid but not registered in government records.');
+    evidenceDetail.push(isMr ? 'काढलेला क्रमांक शासकीय GSTN डेटाबेस रेकॉर्डशी जुळला नाही.' : isHi ? 'निकाला गया नंबर आधिकारिक GSTN डेटाबेस रिकॉर्ड से मेल नहीं खाता।' : 'Extracted identification number returned NOT_FOUND from mock GSTN registry.');
+  }
+  if (hasEmdExpired) {
+    whyFlagged.push(isMr ? 'ईएमडी बँक हमीची मुदत निविदा बंद होण्यापूर्वी संपली आहे.' : isHi ? 'ईएमडी बैंक गारंटी की वैधता निविदा समाप्ति से पूर्व समाप्त हो चुकी है।' : 'EMD Bank Guarantee validity expired prior to bid submission deadline.');
+    evidenceDetail.push(isMr ? 'बँक हमीची तारीख निविदा अटींनुसार अनिवार्य ६ महिन्यांपेक्षा जुनी आढळली.' : isHi ? 'बैंक गारंटी की तिथि निविदा शर्तों के अनुसार अनिवार्य 6 महीने से पुरानी पाई गई।' : 'Bank guarantee instrument date lapsed 3 months ago beyond stipulated bid validity.');
+  } else if (hasExpired) {
+    whyFlagged.push(isMr ? 'वैधानिक कर मंजुरी प्रमाणपत्राची मुदत संपलेली आढळली.' : isHi ? 'वैधानिक कर निकासी प्रमाणपत्र की वैधता तिथि समाप्त पाई गई।' : 'Statutory compliance certificate lapsed prior to bid submission.');
+    evidenceDetail.push(isMr ? 'सादर केलेल्या प्रमाणपत्राची वैधता ३ महिन्यांपूर्वी संपली आहे.' : isHi ? 'प्रस्तुत प्रमाणपत्र की वैधता 3 माह पूर्व समाप्त हो चुकी है।' : 'Submitted clearance certificate expired 3 months ago according to issuance record.');
+  }
+  if (hasMismatch) {
+    whyFlagged.push(isMr ? 'दस्तऐवज आणि शासकीय नोंदणीमधील आस्थापना शीर्षकात तफावत आढळली.' : isHi ? 'दस्तावेज़ों और सरकारी रिकॉर्ड के बीच इकाई नाम में बेमेल पाया गया।' : 'Declared legal entity name differs between vendor submission and official registry records.');
+    evidenceDetail.push(isMr ? 'काढलेला पॅन "SK Heavy Eng Works Sole Prop" दर्शवतो, तर GST शीर्षक "Shree Krishna Heavy Engineering Private Limited" आहे.' : isHi ? 'निकाला गया PAN "SK Heavy Eng Works Sole Prop" दर्शाता है, जबकि GST शीर्षक "Shree Krishna Heavy Engineering Private Limited" है।' : 'Extracted PAN records "SK Heavy Eng Works Sole Prop" whereas GST registration title is "Shree Krishna Heavy Engineering Private Limited".');
+  }
+  if (hasCvc) {
+    whyFlagged.push(isMr ? 'केंद्रीय दक्षता आयोगाच्या (CVC) प्रतिकूल वॉचलिस्टमध्ये नोंद आढळली.' : isHi ? 'केंद्रीय सतर्कता आयोग (CVC) की प्रतिकूल सूची में प्रविष्टि पाई गई।' : 'Central Vigilance Commission (CVC) adverse watch match detected.');
+    evidenceDetail.push(isMr ? 'आस्थापना शीर्षक प्रतिबंध यादीत सूचीबद्ध आढळले.' : isHi ? 'इकाई शीर्षक सतर्कता प्रतिबंध सूची में सूचीबद्ध पाया गया।' : 'Entity name matched against CVC vigilance debarment register.');
+  }
+  if (hasBlank) {
+    whyFlagged.push(isMr ? 'अपलोड केलेले पॅकेज रिकामे किंवा अपठनीय आढळले.' : isHi ? 'अपलोड किया गया पैकेज खाली या अपठनीय पाया गया।' : 'Uploaded document package was detected as blank, corrupted, or devoid of statutory content.');
+    evidenceDetail.push(isMr ? 'दस्तऐवज प्रवाहातून कोणताही वैध कर किंवा ओळख क्रमांक काढता आला नाही.' : isHi ? 'दस्तावेज़ स्ट्रीम से कोई वैध कर या पहचान संख्या नहीं निकाली जा सकी।' : 'Zero legible statutory identifiers or text streams could be parsed from upload.');
+  }
+  if (missingDocs.length > 0) {
+    const listStr = missingDocs.join(', ');
+    whyFlagged.push(isMr ? `अनिवार्य वैधानिक दस्तऐवज (${listStr}) गहाळ आढळले.` : isHi ? `अनिवार्य वैधानिक दस्तावेज़ (${listStr}) अनुपलब्ध पाए गए।` : `Mandatory statutory proof missing from bid package: ${listStr}.`);
+    evidenceDetail.push(isMr ? `निविदा अटींनुसार ${listStr} संलग्न आढळले नाही.` : isHi ? `निविदा शर्तों के अनुसार ${listStr} संलग्न नहीं मिला।` : `Package checklist failed to find valid uploaded certificate for ${listStr}.`);
+  }
+
+  // Format distinct WHY FLAGGED vs WHAT EVIDENCE CAUSED THE FLAG
+  const whyTitle = isMr ? 'प्रणालीने का फ्लॅग केले' : isHi ? 'प्रणाली ने क्यों फ्लैग किया' : 'WHY THE SYSTEM FLAGGED IT';
+  const evTitle = isMr ? 'कारणीभूत पुरावा' : isHi ? 'कारणीभूत साक्ष्य' : 'WHAT EVIDENCE CAUSED THE FLAG';
+
+  return `[${whyTitle}]: ${whyFlagged.join(' ')} \n\n[${evTitle}]: ${evidenceDetail.join(' ')}`;
 }
 
 // ========================================================
@@ -1728,6 +2211,11 @@ $('#verify').onclick = async () => {
         ${renderSubmissionReadinessCard(bidder)}
       </div>
 
+      <!-- STATUTORY VERIFICATION MATRIX (TENDER REQUIREMENT -> DOCUMENT -> VERIFICATION -> EVIDENCE) -->
+      <div style="margin-top:14px;">
+        ${renderAuthoritativeVerificationMatrix(bidder)}
+      </div>
+
       <div class="report-grid" style="margin-top:14px;">
         <div>
           <h3 style="margin-bottom:12px; font-size:12px; text-transform:uppercase;">${t('statutoryMatrixTitle')}</h3>
@@ -1789,6 +2277,150 @@ function renderBidders() {
   if ($('#stat-bidders')) $('#stat-bidders').textContent = bidders.length;
   if ($('#stat-score')) $('#stat-score').textContent = bidders.length ? Math.round(bidders.reduce((a, b) => a + b.score, 0) / bidders.length) + '%' : '0%';
   if ($('#stat-review')) $('#stat-review').textContent = bidders.filter(b => b.status === 'Ready for review' || b.status === 'Needs review').length;
+
+  // Update Command Center Operational Snapshot (Part 1 - Authoritative Progress Engine data)
+  const readyCount = bidders.filter(b => calculateSubmissionReadiness(b).status === 'READY').length;
+  const reviewCount = bidders.filter(b => calculateSubmissionReadiness(b).status === 'REQUIRES REVIEW').length;
+  const notReadyCount = bidders.filter(b => calculateSubmissionReadiness(b).status === 'NOT READY').length;
+  const totalVerifiedDocs = bidders.reduce((acc, b) => acc + (b.docs || 0), 0);
+
+  if ($('#cc-total-bidders')) $('#cc-total-bidders').textContent = bidders.length;
+  if ($('#cc-ready-bidders')) $('#cc-ready-bidders').textContent = readyCount;
+  if ($('#cc-review-bidders')) $('#cc-review-bidders').textContent = reviewCount;
+  if ($('#cc-not-ready-bidders')) $('#cc-not-ready-bidders').textContent = notReadyCount;
+  if ($('#cc-verified-docs')) $('#cc-verified-docs').textContent = totalVerifiedDocs;
+}
+
+// Render Authoritative Statutory Verification Matrix (Part 2 - SIH PS 26100)
+// Tender Requirement -> Required Document -> Submitted -> Verification Check -> Status -> Evidence [View]
+function renderAuthoritativeVerificationMatrix(bidder) {
+  if (!bidder) return '';
+  const m = bidder.matrix || {};
+  const findings = bidder.findings || [];
+  const flags = bidder.flags || [];
+  const defectTextLower = ((m.documents?.evidence || '') + ' ' + findings.join(' ') + ' ' + flags.join(' ')).toLowerCase();
+
+  const isExpired = (defectTextLower.includes('expired') && !defectTextLower.includes('unexpired')) || defectTextLower.includes('lapsed');
+  const isEmdLapsed = (defectTextLower.includes('emd') && defectTextLower.includes('expired') && !defectTextLower.includes('unexpired')) || defectTextLower.includes('emd lapsed');
+  const isMismatch = m.pan?.status === 'REVIEW' || defectTextLower.includes('mismatch') || defectTextLower.includes('differs');
+  const isItrMissing = m.documents?.status === 'MISSING' || defectTextLower.includes('itr missing') || defectTextLower.includes('itr not attached');
+
+  const rows = [
+    {
+      req: 'GST Registration',
+      doc: 'GST Registration Certificate (REG-06)',
+      submitted: Boolean(bidder.gst && !bidder.gst.includes('Missing')),
+      check: m.gst?.status === 'PASS' ? 'Registry Match (Active)' : m.gst?.status === 'FAIL' ? 'GSTIN Suspended' : (m.gst?.status === 'REVIEW' ? 'Address/State Discrepancy' : 'Missing GSTIN Certificate'),
+      status: m.gst?.status || 'MISSING',
+      evKey: 'gst'
+    },
+    {
+      req: 'PAN Identity & Category',
+      doc: 'Permanent Account Number Card',
+      submitted: Boolean(bidder.pan && !bidder.pan.includes('Missing')),
+      check: m.pan?.status === 'PASS' ? 'Registry Match (Valid)' : (m.pan?.status === 'REVIEW' ? 'Entity / Name Mismatch' : 'Missing PAN Card'),
+      status: m.pan?.status || 'MISSING',
+      evKey: 'pan'
+    },
+    {
+      req: 'Udyam / MSME Standing',
+      doc: 'Udyam Registration Certificate',
+      submitted: Boolean(bidder.udyam && !bidder.udyam.includes('Missing')),
+      check: m.udyam?.status === 'PASS' ? 'Active Enterprise Match' : (m.udyam?.status === 'REVIEW' ? 'Category Mismatch (Trader vs Mfg)' : 'No MSME Certificate Uploaded'),
+      status: m.udyam?.status || 'MISSING',
+      evKey: 'udyam'
+    },
+    {
+      req: 'MCA Corporate Status',
+      doc: 'Certificate of Incorporation / CIN',
+      submitted: Boolean(bidder.mca && !bidder.mca.includes('Missing')),
+      check: m.mca?.status === 'PASS' ? 'Active ROC Standing' : (m.mca?.status === 'REVIEW' ? 'ROC Address Discrepancy' : 'No MCA Proof Uploaded'),
+      status: m.mca?.status || 'MISSING',
+      evKey: 'mca'
+    },
+    {
+      req: '3-Year Audited ITR',
+      doc: 'ITR-V / Acknowledgements (3 Yrs)',
+      submitted: !isItrMissing,
+      check: isItrMissing ? 'ITR FY 2024-25 Missing' : '3-Year Returns Filed & Audited',
+      status: isItrMissing ? 'MISSING' : 'PASS',
+      evKey: 'itr'
+    },
+    {
+      req: 'Audited Balance Sheet & Bank',
+      doc: 'CA Balance Sheet & Bank Proof',
+      submitted: true,
+      check: isExpired ? 'Statement / Clearance Expired' : (isMismatch ? 'Bank Account Title Mismatch' : 'Balance Sheet & Bank Proof Verified'),
+      status: isExpired ? 'FAIL' : (isMismatch ? 'REVIEW' : 'PASS'),
+      evKey: isMismatch ? 'bank' : (isExpired ? 'expired' : 'balance_sheet')
+    },
+    {
+      req: 'EMD Guarantee or MSME Waiver',
+      doc: 'EMD Bank Guarantee / Exemption Proof',
+      submitted: true,
+      check: isEmdLapsed ? 'Bank Guarantee Lapsed' : (m.udyam?.status === 'PASS' ? 'MSME Policy Exemption Verified' : 'Bank Guarantee Verified'),
+      status: isEmdLapsed ? 'FAIL' : 'PASS',
+      evKey: 'emd'
+    },
+    {
+      req: 'Signed NIT & Priced BOQ',
+      doc: 'Tender Document & Commercial BOQ',
+      submitted: true,
+      check: 'Unconditional Acceptance & Priced BOQ',
+      status: 'PASS',
+      evKey: 'nit'
+    }
+  ];
+
+  return `
+    <div class="verification-matrix-container" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+      <div style="padding:10px 14px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <b style="font-size:12px; color:#0f172a; text-transform:uppercase; letter-spacing:0.4px;">${t('vmTitle')}</b>
+          <span style="display:block; font-size:10px; color:#64748b;">${t('vmSub')}</span>
+        </div>
+        <span style="font-size:9.5px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:4px;">SIH PS 26100</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:left;">
+          <thead>
+            <tr style="background:#f1f5f9; border-bottom:1px solid #cbd5e1; color:#475569;">
+              <th style="padding:8px 10px; font-weight:700;">${t('vmThRequirement')}</th>
+              <th style="padding:8px 10px; font-weight:700;">${t('vmThDoc')}</th>
+              <th style="padding:8px 10px; text-align:center; font-weight:700;">${t('vmThSubmitted')}</th>
+              <th style="padding:8px 10px; font-weight:700;">${t('vmThVerification')}</th>
+              <th style="padding:8px 10px; text-align:center; font-weight:700;">${t('vmThStatus')}</th>
+              <th style="padding:8px 10px; text-align:center; font-weight:700;">${t('vmThEvidence')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr style="border-bottom:1px solid #f1f5f9; transition:background 0.15s ease;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                <td style="padding:7px 10px; font-weight:600; color:#0f172a;">${esc(r.req)}</td>
+                <td style="padding:7px 10px; color:#475569;">${esc(r.doc)}</td>
+                <td style="padding:7px 10px; text-align:center;">
+                  <span style="font-weight:800; font-size:12px; color:${r.submitted ? '#16a34a' : '#dc2626'};">
+                    ${r.submitted ? '✓' : '✕'}
+                  </span>
+                </td>
+                <td style="padding:7px 10px; color:#334155; font-size:10.5px;">${esc(r.check)}</td>
+                <td style="padding:7px 10px; text-align:center;">
+                  <span class="badge ${r.status.toLowerCase()}" style="font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:4px; letter-spacing:0.3px;">
+                    ${r.status}
+                  </span>
+                </td>
+                <td style="padding:7px 10px; text-align:center;">
+                  <button type="button" class="secondary" style="font-size:10px; padding:3px 8px; font-weight:700; cursor:pointer; border-radius:4px;" onclick="showEvidenceModal('${bidder.id}', '${r.evKey}')">
+                    🔍 ${t('vmBtnViewEvidence')}
+                  </button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
 }
 
 // Select Bidder and show Detail / Compliance / Evidence / Explain Why
@@ -1813,6 +2445,7 @@ function selectBidder(id) {
   `).join('');
 
   const explainWhyText = generateExplainWhy(b, currentLang);
+  const verificationMatrixHtml = renderAuthoritativeVerificationMatrix(b);
 
   $('#review-panel').innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
@@ -1859,31 +2492,98 @@ function selectBidder(id) {
       </p>
     </div>
 
-    <!-- STATUTORY COMPLIANCE MATRIX -->
+    <!-- STATUTORY VERIFICATION MATRIX (TENDER REQUIREMENT -> DOCUMENT -> VERIFICATION -> EVIDENCE) -->
+    ${verificationMatrixHtml}
+
+    <!-- STATUTORY COMPLIANCE MATRIX SUMMARY -->
     <div style="margin-bottom:14px;">
       <h4 style="font-size:11px; letter-spacing:0.5px; text-transform:uppercase; margin:0 0 8px 0;" class="audit-header">${t('statutoryMatrixTitle')}</h4>
       ${matrixHtml}
     </div>
 
-    <!-- AI STATUTORY VERIFICATION FINDINGS & DISCREPANCIES (DISTINCT FROM OFFICER DECISION) -->
-    <div style="margin-bottom:14px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <h4 style="font-size:11px; letter-spacing:0.5px; text-transform:uppercase; margin:0;" class="audit-header">${t('aiVerificationHeading')}</h4>
-        <span style="font-size:9.5px; color:#64748b; font-weight:700;">AI AUTOMATED</span>
+    <!-- AI STATUTORY VERIFICATION FINDINGS & HUMAN REVIEW DESK -->
+    <div style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div>
+          <h4 style="font-size:11px; letter-spacing:0.5px; text-transform:uppercase; margin:0;" class="audit-header">${t('aiVerificationHeading')}</h4>
+          <span style="font-size:10px; color:#0284c7; font-weight:700;">${t('aiFindingBadge')} — ${t('aiFindingSub')}</span>
+        </div>
+        <span style="font-size:9.5px; color:#64748b; font-weight:700; background:#f1f5f9; padding:2px 6px; border-radius:4px;">SIH 26100 DEMO</span>
       </div>
       ${(b.findings || []).length ? b.findings.map((f, fIdx) => {
-        const isResolved = (b.resolvedFindings || []).some(rf => rf.finding === f);
+        const isResolved = (b.resolvedFindings || []).find(rf => rf.finding === f);
+        const isConfirmed = (b.confirmedFindings || []).find(cf => cf.finding === f);
+        const evData = getFindingEvidence(b, f);
+        const isPass = f.includes('zero') || f.includes('passed');
+
         return `
-          <div class="check-item-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #f1f5f9;">
-            <div class="check-item" style="margin:0; flex:1;">
-              <span class="${f.includes('zero') || f.includes('passed') ? 'ok' : 'warn'}">${f.includes('zero') || f.includes('passed') ? '✓' : '!'}</span> 
-              ${esc(f)}
-              ${isResolved ? `<span class="resolved-tag" style="margin-left:8px; font-size:10px; font-weight:800; color:#16a34a; background:#dcfce7; padding:2px 6px; border-radius:4px;">${t('findingResolvedLabel')}</span>` : ''}
+          <div class="finding-card" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <!-- TOP BAR: FINDING TITLE & AI STATUS -->
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+              <div style="flex:1; padding-right:8px;">
+                <span style="font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase;">${t('aiFindingBadge')} #${fIdx + 1}</span>
+                <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:2px;">
+                  <span class="${isPass ? 'ok' : 'warn'}">${isPass ? '✓' : '!'}</span> ${esc(f)}
+                </div>
+              </div>
+              <span class="badge ${isPass ? 'pass' : (f.includes('suspended') || f.includes('fail') ? 'fail' : 'review')}" style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:4px;">
+                ${isPass ? 'PASS' : (f.includes('suspended') || f.includes('fail') ? 'FAIL' : 'REVIEW')}
+              </span>
             </div>
-            ${!isResolved && !f.includes('zero') && !f.includes('passed') ? `
-              <button class="resolve-finding-btn" style="background:none; border:1px solid #cbd5e1; border-radius:4px; padding:3px 7px; font-size:10px; cursor:pointer; font-weight:700; color:#0369a1;" onclick="handleResolveFinding('${b.id}', ${fIdx})">
-                ${t('btnResolveFinding')}
+
+            <!-- REASON & VERIFICATION SOURCE -->
+            <div style="font-size:11px; color:#475569; margin-bottom:8px; line-height:1.4;">
+              <b>Reason:</b> ${esc(evData ? evData.aiReason : f)}<br>
+              <b style="color:#0369a1;">${t('verificationSourceLabel')}:</b> <span style="font-weight:600; color:#0284c7;">${esc(evData ? evData.source : 'MOCK GOVERNMENT CHECK — SIH DEMO')}</span>
+            </div>
+
+            <!-- VIEW EVIDENCE ACTION -->
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+              <button type="button" class="secondary" style="font-size:10.5px; padding:4px 10px; font-weight:700; cursor:pointer; border-radius:5px;" onclick="showEvidenceModal('${b.id}', ${fIdx})">
+                🔍 ${t('viewEvidenceBtn')}
               </button>
+            </div>
+
+            <!-- HUMAN DECISION BADGE (IF RESOLVED OR CONFIRMED) -->
+            ${isResolved ? `
+              <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:8px 10px; margin-top:6px; font-size:11px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-weight:800; color:#16a34a;">${t('humanDecisionBadge')}: ${t('findingResolvedLabel')}</span>
+                  <small style="color:#64748b;">${esc(isResolved.timestamp)}</small>
+                </div>
+                <div style="color:#15803d; margin-top:3px;">
+                  <b>Officer:</b> ${esc(isResolved.resolvedBy)} · <b>Note:</b> "${esc(isResolved.remarks)}"
+                </div>
+              </div>
+            ` : isConfirmed ? `
+              <div style="background:#fffbeb; border:1px solid #fef3c7; border-radius:6px; padding:8px 10px; margin-top:6px; font-size:11px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-weight:800; color:#b45309;">${t('humanDecisionBadge')}: ${t('findingConfirmedLabel')}</span>
+                  <small style="color:#64748b;">${esc(isConfirmed.timestamp)}</small>
+                </div>
+                <div style="color:#92400e; margin-top:3px;">
+                  <b>Officer:</b> ${esc(isConfirmed.confirmedBy)} · <b>Note:</b> "${esc(isConfirmed.remarks)}"
+                </div>
+              </div>
+            ` : !isPass ? `
+              <!-- OFFICER REVIEW & DECISION PANEL (INTERACTIVE HUMAN-IN-THE-LOOP) -->
+              <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; margin-top:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-size:10.5px; font-weight:800; color:#0f172a; text-transform:uppercase;">🧑‍⚖️ ${t('officerReviewPanelTitle')}</span>
+                  <span style="font-size:9.5px; font-weight:700; color:#64748b;">HUMAN OFFICER ACTION</span>
+                </div>
+                <div style="margin-bottom:8px;">
+                  <input id="finding-note-${b.id}-${fIdx}" type="text" placeholder="Officer note / decision rationale..." style="width:100%; box-sizing:border-box; font-size:10.5px; padding:6px 8px; border:1px solid #cbd5e1; border-radius:4px;">
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" style="background:#0284c7; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:10px; font-weight:700; cursor:pointer;" onclick="handleHitlResolveFinding('${b.id}', ${fIdx})">
+                    ✓ ${t('btnResolveFinding')}
+                  </button>
+                  <button type="button" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; border-radius:4px; padding:5px 10px; font-size:10px; font-weight:700; cursor:pointer;" onclick="handleHitlConfirmFinding('${b.id}', ${fIdx})">
+                    ⚠ ${t('btnConfirmFinding')}
+                  </button>
+                </div>
+              </div>
             ` : ''}
           </div>
         `;
@@ -2006,15 +2706,19 @@ async function handleAddOfficerNote(bidderId) {
 }
 window.handleAddOfficerNote = handleAddOfficerNote;
 
-// Resolve Finding by Officer
+// Resolve Finding by Officer (Original Prompt Style)
 async function handleResolveFinding(bidderId, findingIndex) {
   try {
     const remarks = prompt('Enter officer resolution remarks (optional):', 'Finding reviewed and accepted under discretionary officer review') || 'Reviewed and approved by desk officer';
     const officerName = sessionStorage.getItem('sendatender-officer-name') || 'Desk Officer (SIH 26100)';
+    const officerToken = sessionStorage.getItem('sendatender-officer-token') || '';
 
     const res = await fetch('/api/officer/resolve-finding', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-officer-token': officerToken
+      },
       body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
     });
     const data = await res.json();
@@ -2038,6 +2742,82 @@ async function handleResolveFinding(bidderId, findingIndex) {
   }
 }
 window.handleResolveFinding = handleResolveFinding;
+
+// Human-in-the-Loop Interactive Resolve Finding
+async function handleHitlResolveFinding(bidderId, findingIndex) {
+  try {
+    const noteInput = $(`#finding-note-${bidderId}-${findingIndex}`);
+    const remarks = (noteInput && noteInput.value.trim()) ? noteInput.value.trim() : 'Entity name variation verified against supporting documentation.';
+    const officerName = sessionStorage.getItem('sendatender-officer-name') || 'Desk Officer (SIH 26100)';
+    const officerToken = sessionStorage.getItem('sendatender-officer-token') || '';
+
+    toast('Recording officer resolution in audit chain...');
+    const res = await fetch('/api/officer/resolve-finding', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-officer-token': officerToken
+      },
+      body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Failed to resolve finding');
+
+    const index = bidders.findIndex(b => b.id === bidderId);
+    if (index !== -1) {
+      bidders[index] = data.bidder;
+    }
+
+    renderBidders();
+    selectBidder(bidderId);
+    toast(`✓ Finding #${findingIndex + 1} resolved by officer`);
+    if (typeof updateTenderBuddyContextBanner === 'function') updateTenderBuddyContextBanner();
+    if (currentOfficerTab === 'comparison') renderComparisonTable();
+    if (currentOfficerTab === 'audit') renderAuditTrail();
+  } catch (err) {
+    console.error('Error resolving finding:', err);
+    toast('Failed to resolve finding: ' + err.message, true);
+  }
+}
+window.handleHitlResolveFinding = handleHitlResolveFinding;
+
+// Human-in-the-Loop Interactive Confirm Finding
+async function handleHitlConfirmFinding(bidderId, findingIndex) {
+  try {
+    const noteInput = $(`#finding-note-${bidderId}-${findingIndex}`);
+    const remarks = (noteInput && noteInput.value.trim()) ? noteInput.value.trim() : 'Discrepancy confirmed upon officer examination. Document requires rectification.';
+    const officerName = sessionStorage.getItem('sendatender-officer-name') || 'Desk Officer (SIH 26100)';
+    const officerToken = sessionStorage.getItem('sendatender-officer-token') || '';
+
+    toast('Recording officer confirmation in audit chain...');
+    const res = await fetch('/api/officer/confirm-finding', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-officer-token': officerToken
+      },
+      body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Failed to confirm finding');
+
+    const index = bidders.findIndex(b => b.id === bidderId);
+    if (index !== -1) {
+      bidders[index] = data.bidder;
+    }
+
+    renderBidders();
+    selectBidder(bidderId);
+    toast(`⚠️ Finding #${findingIndex + 1} confirmed by officer`);
+    if (typeof updateTenderBuddyContextBanner === 'function') updateTenderBuddyContextBanner();
+    if (currentOfficerTab === 'comparison') renderComparisonTable();
+    if (currentOfficerTab === 'audit') renderAuditTrail();
+  } catch (err) {
+    console.error('Error confirming finding:', err);
+    toast('Failed to confirm finding: ' + err.message, true);
+  }
+}
+window.handleHitlConfirmFinding = handleHitlConfirmFinding;
 
 // =========================================================
 // PHASE 3: OFFICER TABS, BIDDER COMPARISON & AUDIT TRAIL
