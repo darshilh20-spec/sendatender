@@ -660,7 +660,7 @@ function generateGroundedProgressResponse(userMessage, progressState, conversati
         };
       }
       return {
-        reply: `✅ Submission Status: READY\n\nBased on authoritative SendaTender progress state, all mandatory statutory requirements have passed verification with zero unresolved blockers.\n\n• Tender Closing Deadline: ${deadlineStr}\n• Current Compliance Score: ${c.score}%\n\nYou may proceed to the Simulation Submission action.`,
+        reply: `✅ Submission Status: READY\n\nYou are ready to submit! Based on authoritative SendaTender progress state, all mandatory statutory requirements have passed verification with zero unresolved blockers.\n\n• Tender Closing Deadline: ${deadlineStr}\n• Current Compliance Score: ${c.score}%\n\nYou may proceed to the Simulation Submission action.`,
         intent,
         isAi: false
       };
