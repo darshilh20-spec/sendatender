@@ -1309,6 +1309,26 @@ app.post('/api/reset-demo', (req, res) => {
   res.json({ success: true, message: 'Demo bidders restored to 5 standard archetypes', bidders: initialDemoBidders });
 });
 
+// Catch-all JSON 404 handler for API routes
+app.all('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: `API route not found: ${req.method} ${req.originalUrl}`
+  });
+});
+
+// Global API error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled server error:', err);
+  if (req.originalUrl && req.originalUrl.startsWith('/api/')) {
+    return res.status(err.status || 500).json({
+      success: false,
+      error: err.message || 'Internal server error'
+    });
+  }
+  next(err);
+});
+
 app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(` SendaTender Express Server listening on http://localhost:${PORT}`);

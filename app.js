@@ -1364,6 +1364,33 @@ let drop = $('#dropzone');
 ['dragleave', 'drop'].forEach(x => drop.addEventListener(x, e => { e.preventDefault(); drop.classList.remove('drag'); }));
 drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 
+// Helper: Render multi-stage reasoning stages (EXTRACTED -> FORMAT -> CROSS-MATCH -> MOCK REGISTRY -> FINAL)
+function renderMultiStageEvidence(evidenceText) {
+  if (!evidenceText) return '';
+  const parts = evidenceText.split(' | ');
+  if (parts.length >= 3) {
+    return `
+      <div class="evidence-pipeline" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; align-items:center;">
+        ${parts.map((part, idx) => {
+          const isFinal = idx === parts.length - 1;
+          const isPass = part.includes('PASS') || part.includes('ACTIVE') || part.includes('VALID');
+          const isFail = part.includes('FAIL') || part.includes('SUSPENDED') || part.includes('REJECTED');
+          const isRev = part.includes('REVIEW') || part.includes('NOT FOUND') || part.includes('MISMATCH') || part.includes('PENDING');
+          const bg = isFinal 
+            ? (isPass ? '#dcfce7' : isFail ? '#fee2e2' : '#fef3c7') 
+            : '#f1f5f9';
+          const fg = isFinal 
+            ? (isPass ? '#15803d' : isFail ? '#b91c1c' : '#b45309') 
+            : '#334155';
+          return `<span style="font-size:10px; background:${bg}; color:${fg}; padding:2px 6px; border-radius:4px; font-weight:${isFinal ? '750' : '500'}; font-family:monospace;">${esc(part)}</span>${idx < parts.length - 1 ? '<span style="color:#94a3b8; font-size:10px; font-weight:bold;">→</span>' : ''}`;
+        }).join('')}
+      </div>
+    `;
+  }
+  return `<p style="margin:3px 0 0 0; font-size:11px; color:#64748b; line-height:1.4;">${esc(evidenceText)}</p>`;
+}
+window.renderMultiStageEvidence = renderMultiStageEvidence;
+
 // Canonical mock registry for deterministic evidence comparison
 const CANONICAL_MOCK_REGISTRY = {
   gst: {
@@ -2158,6 +2185,22 @@ $('#verify').onclick = async () => {
       method: 'POST',
       body: formData
     });
+
+    const contentType = res.headers.get('content-type') || '';
+    if (!res.ok) {
+      if (contentType.includes('application/json')) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || `HTTP ${res.status}: Verification failed`);
+      } else {
+        const errText = await res.text();
+        throw new Error(`HTTP ${res.status}: Verification server error (${errText.slice(0, 100).replace(/<[^>]*>/g, '').trim() || 'Invalid server response'})`);
+      }
+    }
+
+    if (!contentType.includes('application/json')) {
+      const nonJsonText = await res.text();
+      throw new Error(`Expected JSON response but server returned ${contentType || 'text'} (${nonJsonText.slice(0, 100).replace(/<[^>]*>/g, '').trim()})`);
+    }
 
     const result = await res.json();
     if (!result.success) throw new Error(result.error || 'Verification failed');
