@@ -1,16 +1,17 @@
 # Dependencies
 node_modules/
-package-lock.json
 
 # Environment variables & secrets
 .env
 .env.*
 *.env
+!.env.example
 
 # Temporary test & scratch files
 *.tmp
 *.log
-scratch/
+scratch/test_pdfs/
+scratch/*.pdf
 test-*.pdf
 report_test.pdf
 

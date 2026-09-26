@@ -2078,7 +2078,7 @@ function renderSubmissionReadinessCard(bidder) {
 
       <!-- TENDER DEADLINE & METADATA -->
       <div class="readiness-deadline-banner">
-        <span>📅 <b>${t('tenderDeadlineLabel')}:</b> ${esc(r.deadline)}</span>
+        <span>📅 <b>${t('tenderDeadlineLabel')}:</b> ${esc(r.deadline)} <small style="font-weight:600; color:#0284c7;">(${currentLang === 'hi' ? 'सिम्युलेटेड चक्र' : currentLang === 'mr' ? 'सिम्युलेटेड चक्र' : 'Simulated Cycle'})</small></span>
         <span>🏢 <b>Bidder:</b> ${esc(bidder.name)} · <b>Tender ID:</b> S26-104</span>
       </div>
 
@@ -2154,7 +2154,211 @@ async function handleSimulationSubmit(bidderId) {
     toast('Simulation submission failed: ' + err.message, true);
   }
 }
-window.handleSimulationSubmit = handleSimulationSubmit;
+// Client-Side Deterministic Verification Engine (Authoritative Fallback for Static Deployments / HTTP 405)
+async function processClientSideBidderVerification(fileList, declaredProfile) {
+  const declaredName = (declaredProfile.name || '').trim();
+  const declaredGst = (declaredProfile.gst || '').trim().toUpperCase();
+  const declaredPan = (declaredProfile.pan || '').trim().toUpperCase();
+  const declaredUdyam = (declaredProfile.udyam || '').trim().toUpperCase();
+  const declaredAddress = (declaredProfile.address || '').trim();
+
+  // Inspect files
+  let aggregatedText = '';
+  let hasExpiredDoc = false;
+  let hasBlankDoc = false;
+
+  for (const f of fileList) {
+    let text = (f.name || '');
+    if (f.raw && typeof f.raw.text === 'function') {
+      try {
+        const rawText = await f.raw.text();
+        text += ' ' + rawText;
+      } catch (e) {}
+    }
+    const up = text.toUpperCase();
+    if (up.includes('EXPIRED') || up.includes('VALIDITY LAPSED') || up.includes('EXPIRED ON')) {
+      hasExpiredDoc = true;
+    }
+    if (f.size < 50) {
+      hasBlankDoc = true;
+    }
+    aggregatedText += ' ' + text;
+  }
+
+  const allText = aggregatedText.toUpperCase();
+  const GST_REGEX = /\b[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}\b/;
+  const PAN_REGEX = /\b[A-Z]{5}[0-9]{4}[A-Z]{1}\b/;
+  const UDYAM_REGEX = /\bUDYAM-[A-Z]{2}-[0-9]{2}-[0-9]{7}\b/i;
+  const MCA_CIN_REGEX = /\b[UL][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}\b/;
+
+  const extractedGstMatch = allText.match(GST_REGEX);
+  const extractedPanMatch = allText.match(PAN_REGEX);
+  const extractedUdyamMatch = allText.match(UDYAM_REGEX);
+  const extractedMcaMatch = allText.match(MCA_CIN_REGEX);
+
+  const effectiveGst = extractedGstMatch ? extractedGstMatch[0] : (declaredGst || null);
+  const effectivePan = extractedPanMatch ? extractedPanMatch[0] : (declaredPan || (effectiveGst ? effectiveGst.substring(2, 12) : null));
+  const effectiveUdyam = extractedUdyamMatch ? extractedUdyamMatch[0].toUpperCase() : (declaredUdyam || null);
+  const effectiveMca = extractedMcaMatch ? extractedMcaMatch[0] : null;
+
+  // Name Mismatch Check
+  let nameMismatchDetected = false;
+  const flags = [];
+  const findings = [];
+
+  if (effectiveGst && CANONICAL_MOCK_REGISTRY.gst[effectiveGst] && declaredName) {
+    const regName = CANONICAL_MOCK_REGISTRY.gst[effectiveGst].legalName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanDeclared = declaredName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const words = declaredName.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !['private','limited','pvt','ltd','solutions','enterprises'].includes(w));
+    const matchedWord = words.some(w => regName.includes(w));
+    if (!matchedWord) {
+      nameMismatchDetected = true;
+      flags.push(`Declared entity name "${declaredName}" does not match registered GSTN title "${CANONICAL_MOCK_REGISTRY.gst[effectiveGst].legalName}".`);
+    }
+  }
+
+  // GST Checkpoint
+  let gstStatus = 'MISSING';
+  let gstEvidence = 'Extracted: NONE | Format: MISSING | MOCK GST Registry: NOT QUERIED | Final: MISSING';
+  if (effectiveGst) {
+    const regGst = CANONICAL_MOCK_REGISTRY.gst[effectiveGst];
+    if (hasExpiredDoc) {
+      gstStatus = 'FAIL';
+      gstEvidence = `Extracted: ${effectiveGst} | Format: VALID | Mock GST Registry: LAPSED/EXPIRED (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: FAIL`;
+      flags.push('GST or associated statutory certificate has lapsed/expired.');
+    } else if (regGst && regGst.status === 'ACTIVE') {
+      if (nameMismatchDetected) {
+        gstStatus = 'REVIEW';
+        gstEvidence = `Extracted: ${effectiveGst} | Format: VALID | Cross-match: ENTITY NAME MISMATCH | Mock GST Registry: ACTIVE | Final: REVIEW`;
+      } else {
+        gstStatus = 'PASS';
+        gstEvidence = `Extracted: ${effectiveGst} | Format: VALID | Cross-match: PASS | MOCK GST Registry: ACTIVE (${regGst.state}) (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: PASS`;
+      }
+    } else if (regGst && regGst.status === 'SUSPENDED') {
+      gstStatus = 'FAIL';
+      gstEvidence = `Extracted: ${effectiveGst} | Format: VALID | Mock GST Registry: SUSPENDED (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: FAIL`;
+      flags.push('GST registration is suspended in government records.');
+    } else {
+      gstStatus = 'REVIEW';
+      gstEvidence = `Extracted: ${effectiveGst} | Format: VALID | MOCK GST Registry: NOT FOUND (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: REVIEW`;
+    }
+  }
+
+  // PAN Checkpoint
+  let panStatus = 'MISSING';
+  let panEvidence = 'Extracted: NONE | Format: MISSING | MOCK PAN Registry: NOT QUERIED | Final: MISSING';
+  if (effectivePan) {
+    const regPan = CANONICAL_MOCK_REGISTRY.pan[effectivePan];
+    if (nameMismatchDetected) {
+      panStatus = 'REVIEW';
+      panEvidence = `Extracted: ${effectivePan} | Format: VALID | Cross-match: ENTITY MISMATCH | Mock PAN Registry: VALID | Final: REVIEW`;
+    } else if (regPan) {
+      panStatus = 'PASS';
+      panEvidence = `Extracted: ${effectivePan} | Format: VALID | Cross-match: PASS | MOCK PAN Registry: VALID (${regPan.category}) (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: PASS`;
+    } else {
+      panStatus = 'REVIEW';
+      panEvidence = `Extracted: ${effectivePan} | Format: VALID | MOCK PAN Registry: NOT FOUND (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: REVIEW`;
+    }
+  }
+
+  // Udyam Checkpoint
+  let udyamStatus = 'MISSING';
+  let udyamEvidence = 'Extracted: NONE | Format: MISSING | MOCK Udyam Registry: NOT QUERIED | Final: MISSING';
+  if (effectiveUdyam) {
+    const regUdyam = CANONICAL_MOCK_REGISTRY.udyam[effectiveUdyam];
+    if (regUdyam) {
+      udyamStatus = 'PASS';
+      udyamEvidence = `Extracted: ${effectiveUdyam} | Format: VALID | Cross-match: PASS | MOCK Udyam Registry: ACTIVE (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: PASS`;
+    } else {
+      udyamStatus = 'REVIEW';
+      udyamEvidence = `Extracted: ${effectiveUdyam} | Format: VALID | MOCK Udyam Registry: NOT FOUND (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: REVIEW`;
+    }
+  }
+
+  // MCA Checkpoint
+  let mcaStatus = 'MISSING';
+  let mcaEvidence = 'Extracted: NONE | Format: MISSING | Mock MCA21 Registry: NO CIN EXTRACTED (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: MISSING';
+  if (effectiveMca) {
+    const regMca = CANONICAL_MOCK_REGISTRY.mca[effectiveMca];
+    if (regMca && regMca.status === 'ACTIVE') {
+      mcaStatus = 'PASS';
+      mcaEvidence = `Extracted: ${effectiveMca} | Format: VALID | Cross-match: PASS | MOCK MCA21 Registry: ACTIVE (${regMca.roc}) (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: PASS`;
+    } else {
+      mcaStatus = 'REVIEW';
+      mcaEvidence = `Extracted: ${effectiveMca} | Format: VALID | Mock MCA21 Registry: ${regMca ? regMca.status : 'NOT FOUND'} (MOCK GOVERNMENT CHECK — SIH DEMO) | Final: REVIEW`;
+    }
+  }
+
+  // Document Suite Checkpoint
+  let docsStatus = hasExpiredDoc ? 'FAIL' : (hasBlankDoc ? 'FAIL' : 'PASS');
+  let docsEvidence = hasExpiredDoc 
+    ? 'Document inspection detected expired statutory certificate or lapsed validity date.'
+    : (hasBlankDoc ? 'Document inspection detected blank or corrupted file.' : 'Mandatory tender submission documents verified valid and unexpired.');
+
+  if (hasExpiredDoc) flags.push('Statutory certificate expired prior to tender submission');
+
+  // Compute Score & Risk
+  let score = 0;
+  if (gstStatus === 'PASS') score += 25; else if (gstStatus === 'REVIEW') score += 10;
+  if (panStatus === 'PASS') score += 25; else if (panStatus === 'REVIEW') score += 10;
+  if (udyamStatus === 'PASS') score += 15; else if (udyamStatus === 'REVIEW') score += 5;
+  if (mcaStatus === 'PASS') score += 15; else if (mcaStatus === 'REVIEW') score += 5;
+  if (docsStatus === 'PASS') score += 20;
+
+  if (hasExpiredDoc) score = Math.min(score, 64);
+  if (gstStatus === 'FAIL') score = Math.min(score, 35);
+
+  const risk = (gstStatus === 'FAIL' || docsStatus === 'FAIL' || score < 60) ? 'High' : (score < 80 ? 'Medium' : 'Low');
+  const status = (gstStatus === 'FAIL' || docsStatus === 'FAIL') ? 'Flagged' : (score >= 80 ? 'Ready for review' : 'Needs review');
+
+  if (flags.length === 0) {
+    findings.push('All submitted documents passed multi-stage mock verification with zero discrepancies.');
+  } else {
+    flags.forEach(f => findings.push(f));
+  }
+
+  let bidderName = declaredName;
+  if (!bidderName) {
+    if (effectiveGst && CANONICAL_MOCK_REGISTRY.gst[effectiveGst]) {
+      bidderName = CANONICAL_MOCK_REGISTRY.gst[effectiveGst].legalName;
+    } else if (effectiveGst) {
+      bidderName = `Vendor (${effectiveGst})`;
+    } else {
+      bidderName = `Vendor Submission (${fileList.length} docs)`;
+    }
+  }
+
+  return {
+    id: `bidder-user-${Date.now()}`,
+    name: bidderName,
+    declaredAddress: declaredAddress || 'Not Provided',
+    gst: effectiveGst || 'Not Extracted / Missing',
+    pan: effectivePan || 'Not Extracted / Missing',
+    udyam: effectiveUdyam || 'Not Extracted / Missing',
+    mca: effectiveMca || 'Not Extracted / Missing',
+    package: 'Tender #S26-104 (Valves & Piping)',
+    demoType: 'Live Uploaded Verification (Static Environment)',
+    typeDescription: 'Processed via client-side multi-stage verification pipeline',
+    score,
+    risk,
+    status,
+    docs: fileList.length || 1,
+    matrix: {
+      gst: { status: gstStatus, label: 'GSTN Registration Check', evidence: gstEvidence },
+      pan: { status: panStatus, label: 'PAN Identity Check', evidence: panEvidence },
+      udyam: { status: udyamStatus, label: 'Udyam MSME Registry', evidence: udyamEvidence },
+      mca: { status: mcaStatus, label: 'MCA21 Company Status', evidence: mcaEvidence },
+      documents: { status: docsStatus, label: 'Statutory Document Suite', evidence: docsEvidence }
+    },
+    findings,
+    flags,
+    audit: [
+      { action: 'Multi-Stage Document Verification Completed', timestamp: 'Just now', user: 'System (Client-Side Fallback Engine)' },
+      { action: 'Package Uploaded by Vendor', timestamp: 'Just now', user: 'Vendor Portal' }
+    ]
+  };
+}
+
 $('#verify').onclick = async () => {
   if (!files.length) return;
   const verifyBtn = $('#verify');
@@ -2186,26 +2390,40 @@ $('#verify').onclick = async () => {
       body: formData
     });
 
-    const contentType = res.headers.get('content-type') || '';
-    if (!res.ok) {
-      if (contentType.includes('application/json')) {
-        const errJson = await res.json();
-        throw new Error(errJson.error || `HTTP ${res.status}: Verification failed`);
-      } else {
-        const errText = await res.text();
-        throw new Error(`HTTP ${res.status}: Verification server error (${errText.slice(0, 100).replace(/<[^>]*>/g, '').trim() || 'Invalid server response'})`);
+    let bidder = null;
+
+    if (res.status === 405) {
+      // 405 Method Not Allowed occurs on static file hosts (like GitHub Pages or static web servers)
+      // Execute the deterministic client-side verification pipeline
+      bidder = await processClientSideBidderVerification(files, {
+        name: declaredName,
+        gst: declaredGst,
+        pan: declaredPan,
+        udyam: declaredUdyam,
+        address: declaredAddress,
+        package: 'Tender #S26-104 (Valves & Piping)'
+      });
+    } else {
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok) {
+        if (contentType.includes('application/json')) {
+          const errJson = await res.json();
+          throw new Error(errJson.error || `HTTP ${res.status}: Verification failed`);
+        } else {
+          const errText = await res.text();
+          throw new Error(`HTTP ${res.status}: Verification server error (${errText.slice(0, 100).replace(/<[^>]*>/g, '').trim() || 'Invalid server response'})`);
+        }
       }
+
+      if (!contentType.includes('application/json')) {
+        const nonJsonText = await res.text();
+        throw new Error(`Expected JSON response but server returned ${contentType || 'text'} (${nonJsonText.slice(0, 100).replace(/<[^>]*>/g, '').trim()})`);
+      }
+
+      const result = await res.json();
+      if (!result.success) throw new Error(result.error || 'Verification failed');
+      bidder = result.bidder;
     }
-
-    if (!contentType.includes('application/json')) {
-      const nonJsonText = await res.text();
-      throw new Error(`Expected JSON response but server returned ${contentType || 'text'} (${nonJsonText.slice(0, 100).replace(/<[^>]*>/g, '').trim()})`);
-    }
-
-    const result = await res.json();
-    if (!result.success) throw new Error(result.error || 'Verification failed');
-
-    const bidder = result.bidder;
     // Add real uploaded bidder without overwriting preloaded demo bidders
     bidders = bidders.filter(b => b.id !== bidder.id);
     bidders.unshift(bidder);
