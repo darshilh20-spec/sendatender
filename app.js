@@ -1131,8 +1131,27 @@ const DEMO_FALLBACK_BIDDERS = [
   }
 ];
 
-// Fetch all bidders from Node.js backend (with automatic static demo fallback)
+// Detect if running on static hosting (e.g. GitHub Pages) vs localhost Node.js backend
+function isStaticHosting() {
+  if (window.SendaTenderDemoEngine && typeof window.SendaTenderDemoEngine.isLocalhost === 'boolean') {
+    return !window.SendaTenderDemoEngine.isLocalhost;
+  }
+  return !(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '3000');
+}
+
+// Fetch all bidders from Node.js backend (or SendaTenderDemoEngine on GitHub Pages)
 async function fetchBidders() {
+  if (isStaticHosting() && window.SendaTenderDemoEngine) {
+    bidders = window.SendaTenderDemoEngine.getStoredBidders();
+    renderBidders();
+    if (selectedId) {
+      selectBidder(selectedId);
+    } else if (bidders.length > 0) {
+      selectBidder(bidders[0].id);
+    }
+    return;
+  }
+
   try {
     const res = await fetch('/api/bidders');
     if (res.ok) {
@@ -1151,7 +1170,7 @@ async function fetchBidders() {
     throw new Error('Backend API not responding; switching to demo mode');
   } catch (err) {
     console.warn('Using client-side demo bidders fallback:', err);
-    bidders = [...DEMO_FALLBACK_BIDDERS];
+    bidders = window.SendaTenderDemoEngine ? window.SendaTenderDemoEngine.getStoredBidders() : [...DEMO_FALLBACK_BIDDERS];
     renderBidders();
     if (selectedId) {
       selectBidder(selectedId);
@@ -1242,6 +1261,35 @@ async function handleOfficerLogin() {
   btn.disabled = true;
   btn.textContent = t('verifyingCreds');
   if (errorBox) errorBox.style.display = 'none';
+
+  // In GitHub Pages demo mode, validate client-side synthetic credentials
+  if (isStaticHosting()) {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = t('btnLogin');
+      if (officerId === 'OFFICER2026' && password === 'Senda@2026') {
+        officerAuthenticated = true;
+        const fakeToken = 'DEMO-OFFICER-SESSION-' + Date.now();
+        const officerName = 'Desk Officer (SIH 26100)';
+        sessionStorage.setItem('sendatender-officer-token', fakeToken);
+        sessionStorage.setItem('sendatender-officer-name', officerName);
+        if ($('#officer-display-name')) $('#officer-display-name').textContent = officerName;
+        if ($('#officer-avatar')) $('#officer-avatar').textContent = 'DO';
+
+        closeOfficerModal();
+        toast(t('toastOfficerAuthSuccess'));
+        nav('officer');
+        switchOfficerTab('dossiers');
+      } else {
+        if (errorBox) {
+          errorBox.textContent = t('loginError');
+          errorBox.style.display = 'block';
+        }
+        toast(t('toastOfficerDenied'), true);
+      }
+    }, 300);
+    return;
+  }
 
   try {
     const res = await fetch('/api/officer/login', {
@@ -2123,17 +2171,26 @@ async function handleSimulationSubmit(bidderId) {
   try {
     toast('Submitting bid package in simulation mode...');
     const vendorName = $('#vendor-profile-name')?.value.trim() || undefined;
-    const res = await fetch('/api/vendor/submit-simulation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: bidderId, vendorName })
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Submission failed');
+
+    let updatedBidder = null;
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      updatedBidder = window.SendaTenderDemoEngine.submitSimulation(bidderId, vendorName);
+    } else {
+      const res = await fetch('/api/vendor/submit-simulation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: bidderId, vendorName })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Submission failed');
+      updatedBidder = data.bidder;
+    }
+
+    if (!updatedBidder) throw new Error('Submission failed');
 
     const index = bidders.findIndex(b => b.id === bidderId);
     if (index !== -1) {
-      bidders[index] = data.bidder;
+      bidders[index] = updatedBidder;
     }
 
     // Refresh UI
@@ -2144,7 +2201,7 @@ async function handleSimulationSubmit(bidderId) {
     const reportEl = $('#report');
     if (reportEl && !reportEl.classList.contains('hidden')) {
       const container = $('#submission-readiness-container');
-      if (container) container.innerHTML = renderSubmissionReadinessCard(data.bidder);
+      if (container) container.innerHTML = renderSubmissionReadinessCard(updatedBidder);
     }
 
     toast('✓ ' + t('btnSimulateSubmitted'));
@@ -2385,16 +2442,10 @@ $('#verify').onclick = async () => {
     if (declaredAddress) formData.append('address', declaredAddress);
     formData.append('package', 'Tender #S26-104 (Valves & Piping)');
 
-    const res = await fetch('/api/process-bidder', {
-      method: 'POST',
-      body: formData
-    });
-
     let bidder = null;
 
-    if (res.status === 405) {
-      // 405 Method Not Allowed occurs on static file hosts (like GitHub Pages or static web servers)
-      // Execute the deterministic client-side verification pipeline
+    if (isStaticHosting()) {
+      // In GitHub Pages demo mode, directly run client-side verification engine
       bidder = await processClientSideBidderVerification(files, {
         name: declaredName,
         gst: declaredGst,
@@ -2403,26 +2454,48 @@ $('#verify').onclick = async () => {
         address: declaredAddress,
         package: 'Tender #S26-104 (Valves & Piping)'
       });
+      if (window.SendaTenderDemoEngine) {
+        const stored = window.SendaTenderDemoEngine.getStoredBidders();
+        const updated = [bidder, ...stored.filter(b => b.id !== bidder.id)];
+        window.SendaTenderDemoEngine.setStoredBidders(updated);
+      }
     } else {
-      const contentType = res.headers.get('content-type') || '';
-      if (!res.ok) {
-        if (contentType.includes('application/json')) {
-          const errJson = await res.json();
-          throw new Error(errJson.error || `HTTP ${res.status}: Verification failed`);
-        } else {
-          const errText = await res.text();
-          throw new Error(`HTTP ${res.status}: Verification server error (${errText.slice(0, 100).replace(/<[^>]*>/g, '').trim() || 'Invalid server response'})`);
+      const res = await fetch('/api/process-bidder', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (res.status === 405) {
+        // Fallback if 405 encountered on static server
+        bidder = await processClientSideBidderVerification(files, {
+          name: declaredName,
+          gst: declaredGst,
+          pan: declaredPan,
+          udyam: declaredUdyam,
+          address: declaredAddress,
+          package: 'Tender #S26-104 (Valves & Piping)'
+        });
+      } else {
+        const contentType = res.headers.get('content-type') || '';
+        if (!res.ok) {
+          if (contentType.includes('application/json')) {
+            const errJson = await res.json();
+            throw new Error(errJson.error || `HTTP ${res.status}: Verification failed`);
+          } else {
+            const errText = await res.text();
+            throw new Error(`HTTP ${res.status}: Verification server error (${errText.slice(0, 100).replace(/<[^>]*>/g, '').trim() || 'Invalid server response'})`);
+          }
         }
-      }
 
-      if (!contentType.includes('application/json')) {
-        const nonJsonText = await res.text();
-        throw new Error(`Expected JSON response but server returned ${contentType || 'text'} (${nonJsonText.slice(0, 100).replace(/<[^>]*>/g, '').trim()})`);
-      }
+        if (!contentType.includes('application/json')) {
+          const nonJsonText = await res.text();
+          throw new Error(`Expected JSON response but server returned ${contentType || 'text'} (${nonJsonText.slice(0, 100).replace(/<[^>]*>/g, '').trim()})`);
+        }
 
-      const result = await res.json();
-      if (!result.success) throw new Error(result.error || 'Verification failed');
-      bidder = result.bidder;
+        const result = await res.json();
+        if (!result.success) throw new Error(result.error || 'Verification failed');
+        bidder = result.bidder;
+      }
     }
     // Add real uploaded bidder without overwriting preloaded demo bidders
     bidders = bidders.filter(b => b.id !== bidder.id);
@@ -2504,9 +2577,16 @@ $('#verify').onclick = async () => {
   }
 };
 
-// Download actual PDF report from backend
+// Download actual PDF report from backend (or generate client-side on GitHub Pages)
 window.downloadPdfReport = function(id) {
   toast(t('toastPdfGenerating'));
+  if (isStaticHosting() && window.SendaTenderDemoEngine) {
+    const targetBidder = bidders.find(b => b.id === id) || (window.SendaTenderDemoEngine.getStoredBidders().find(b => b.id === id));
+    if (targetBidder) {
+      window.SendaTenderDemoEngine.generateClientSidePdf(targetBidder);
+      return;
+    }
+  }
   window.open(`/api/report/${id}`, '_blank');
 };
 
@@ -2897,28 +2977,37 @@ function selectBidder(id) {
 }
 window.selectBidder = selectBidder;
 
-// Submit decision to backend
+// Submit decision to backend (or demo engine)
 async function submitDecision(id, decision) {
   try {
-    toast(`Recording ${decision} on backend...`);
+    toast(`Recording ${decision}...`);
     const officerName = sessionStorage.getItem('sendatender-officer-name') || 'Desk Officer (SIH 26100)';
-    const res = await fetch('/api/decision', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id,
-        decision,
-        officerName,
-        officerRemarks: `Officer marked status as ${decision}`
-      })
-    });
 
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to update decision');
+    let updatedBidder = null;
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      updatedBidder = window.SendaTenderDemoEngine.recordOfficerDecision(id, decision);
+    } else {
+      const res = await fetch('/api/decision', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          decision,
+          officerName,
+          officerRemarks: `Officer marked status as ${decision}`
+        })
+      });
+
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to update decision');
+      updatedBidder = data.bidder;
+    }
+
+    if (!updatedBidder) throw new Error('Failed to update decision');
 
     const index = bidders.findIndex(x => x.id === id);
     if (index !== -1) {
-      bidders[index] = data.bidder;
+      bidders[index] = updatedBidder;
     }
 
     renderBidders();
@@ -2943,17 +3032,26 @@ async function handleAddOfficerNote(bidderId) {
 
   try {
     const officerName = sessionStorage.getItem('sendatender-officer-name') || 'Desk Officer (SIH 26100)';
-    const res = await fetch('/api/officer/note', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: bidderId, note: noteText, officerName })
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to save note');
+    let updatedBidder = null;
+
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      updatedBidder = window.SendaTenderDemoEngine.addOfficerNote(bidderId, noteText);
+    } else {
+      const res = await fetch('/api/officer/note', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: bidderId, note: noteText, officerName })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to save note');
+      updatedBidder = data.bidder;
+    }
+
+    if (!updatedBidder) throw new Error('Failed to save note');
 
     const index = bidders.findIndex(b => b.id === bidderId);
     if (index !== -1) {
-      bidders[index] = data.bidder;
+      bidders[index] = updatedBidder;
     }
 
     renderBidders();
@@ -2974,20 +3072,28 @@ async function handleResolveFinding(bidderId, findingIndex) {
     const officerName = sessionStorage.getItem('sendatender-officer-name') || 'Desk Officer (SIH 26100)';
     const officerToken = sessionStorage.getItem('sendatender-officer-token') || '';
 
-    const res = await fetch('/api/officer/resolve-finding', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-officer-token': officerToken
-      },
-      body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to resolve finding');
+    let updatedBidder = null;
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      updatedBidder = window.SendaTenderDemoEngine.resolveFinding(bidderId, findingIndex, remarks);
+    } else {
+      const res = await fetch('/api/officer/resolve-finding', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-officer-token': officerToken
+        },
+        body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to resolve finding');
+      updatedBidder = data.bidder;
+    }
+
+    if (!updatedBidder) throw new Error('Failed to resolve finding');
 
     const index = bidders.findIndex(b => b.id === bidderId);
     if (index !== -1) {
-      bidders[index] = data.bidder;
+      bidders[index] = updatedBidder;
     }
 
     renderBidders();
@@ -3013,20 +3119,28 @@ async function handleHitlResolveFinding(bidderId, findingIndex) {
     const officerToken = sessionStorage.getItem('sendatender-officer-token') || '';
 
     toast('Recording officer resolution in audit chain...');
-    const res = await fetch('/api/officer/resolve-finding', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-officer-token': officerToken
-      },
-      body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to resolve finding');
+    let updatedBidder = null;
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      updatedBidder = window.SendaTenderDemoEngine.resolveFinding(bidderId, findingIndex, remarks);
+    } else {
+      const res = await fetch('/api/officer/resolve-finding', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-officer-token': officerToken
+        },
+        body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to resolve finding');
+      updatedBidder = data.bidder;
+    }
+
+    if (!updatedBidder) throw new Error('Failed to resolve finding');
 
     const index = bidders.findIndex(b => b.id === bidderId);
     if (index !== -1) {
-      bidders[index] = data.bidder;
+      bidders[index] = updatedBidder;
     }
 
     renderBidders();
@@ -3051,20 +3165,28 @@ async function handleHitlConfirmFinding(bidderId, findingIndex) {
     const officerToken = sessionStorage.getItem('sendatender-officer-token') || '';
 
     toast('Recording officer confirmation in audit chain...');
-    const res = await fetch('/api/officer/confirm-finding', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-officer-token': officerToken
-      },
-      body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to confirm finding');
+    let updatedBidder = null;
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      updatedBidder = window.SendaTenderDemoEngine.confirmFinding(bidderId, findingIndex, remarks);
+    } else {
+      const res = await fetch('/api/officer/confirm-finding', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-officer-token': officerToken
+        },
+        body: JSON.stringify({ id: bidderId, findingIndex, remarks, officerName })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to confirm finding');
+      updatedBidder = data.bidder;
+    }
+
+    if (!updatedBidder) throw new Error('Failed to confirm finding');
 
     const index = bidders.findIndex(b => b.id === bidderId);
     if (index !== -1) {
-      bidders[index] = data.bidder;
+      bidders[index] = updatedBidder;
     }
 
     renderBidders();
@@ -3140,36 +3262,78 @@ async function renderComparisonTable() {
   tbody.innerHTML = `<tr><td colspan="14" class="empty" style="padding:24px;">Loading comparison data...</td></tr>`;
 
   try {
-    const res = await fetch('/api/officer/comparison', {
-      headers: {
-        'x-officer-token': token,
-        'Authorization': `Bearer ${token}`
+    let comparisonList = [];
+
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      const stored = window.SendaTenderDemoEngine.getStoredBidders();
+      comparisonList = stored.map(b => {
+        const m = b.matrix || {};
+        const passCount = Object.values(m).filter(v => v.status === 'PASS').length;
+        const reviewCount = Object.values(m).filter(v => v.status === 'REVIEW').length;
+        const failCount = Object.values(m).filter(v => v.status === 'FAIL').length;
+        const missingCount = Object.values(m).filter(v => v.status === 'MISSING').length;
+        const expiredCount = Object.values(m).filter(v => v.status === 'EXPIRED').length;
+
+        const blockers = (b.findings || []).filter(f => f.toLowerCase().includes('fail') || f.toLowerCase().includes('suspended') || f.toLowerCase().includes('expired') || f.toLowerCase().includes('missing'));
+        let submissionReadiness = 'READY';
+        if (b.score < 60 || failCount > 0 || missingCount > 0 || expiredCount > 0) {
+          submissionReadiness = 'NOT READY';
+        } else if (reviewCount > 0 || b.score < 90) {
+          submissionReadiness = 'REQUIRES REVIEW';
+        }
+
+        return {
+          id: b.id,
+          name: b.name,
+          demoType: b.demoType || '',
+          score: b.score,
+          risk: b.risk,
+          officerStatus: b.status,
+          submissionReadiness,
+          counts: { pass: passCount, review: reviewCount, fail: failCount, missing: missingCount, expired: expiredCount },
+          statutory: {
+            gst: m.gst?.status || 'MISSING',
+            pan: m.pan?.status || 'MISSING',
+            udyam: m.udyam?.status || 'MISSING',
+            mca: m.mca?.status || 'MISSING'
+          },
+          blockers,
+          blockersCount: blockers.length
+        };
+      });
+    } else {
+      const res = await fetch('/api/officer/comparison', {
+        headers: {
+          'x-officer-token': token,
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (res.status === 403 || res.status === 401) {
+        tbody.innerHTML = `<tr><td colspan="14" class="empty" style="color:#dc2626; padding:24px;">Access Denied: Officer authentication required.</td></tr>`;
+        return;
       }
-    });
 
-    if (res.status === 403 || res.status === 401) {
-      tbody.innerHTML = `<tr><td colspan="14" class="empty" style="color:#dc2626; padding:24px;">Access Denied: Officer authentication required.</td></tr>`;
-      return;
+      const data = await res.json();
+      if (!data.success || !Array.isArray(data.comparison)) {
+        tbody.innerHTML = `<tr><td colspan="14" class="empty" style="padding:24px;">Failed to load comparison data.</td></tr>`;
+        return;
+      }
+      comparisonList = data.comparison;
     }
 
-    const data = await res.json();
-    if (!data.success || !Array.isArray(data.comparison)) {
-      tbody.innerHTML = `<tr><td colspan="14" class="empty" style="padding:24px;">Failed to load comparison data.</td></tr>`;
-      return;
-    }
-
-    if (data.comparison.length === 0) {
+    if (comparisonList.length === 0) {
       tbody.innerHTML = `<tr><td colspan="14" class="empty" style="padding:24px;">No bidders found to compare.</td></tr>`;
       return;
     }
 
-    tbody.innerHTML = data.comparison.map(b => {
+    tbody.innerHTML = comparisonList.map(b => {
       const scoreColor = b.score >= 80 ? '#16a34a' : (b.score >= 60 ? '#ca8a04' : '#dc2626');
       const readinessClass = b.submissionReadiness === 'READY' ? 'ready' : (b.submissionReadiness === 'REQUIRES REVIEW' ? 'requires-review' : 'not-ready');
       const readinessLabel = b.submissionReadiness === 'READY' ? t('readinessReady') : (b.submissionReadiness === 'REQUIRES REVIEW' ? t('readinessRequiresReview') : t('readinessNotReady'));
 
       const statBadge = (st, lbl) => {
-        const cls = st.toLowerCase();
+        const cls = (st || 'missing').toLowerCase();
         return `<span class="badge ${cls}" style="font-size:10px; padding:2px 6px; font-weight:700;" title="${lbl}: ${st}">${lbl}: ${st}</span>`;
       };
 
@@ -3245,34 +3409,67 @@ async function renderAuditTrail() {
   const actor = $('#audit-actor-filter')?.value || 'All';
   const q = $('#audit-search')?.value || '';
 
-  const params = new URLSearchParams();
-  if (bidderId !== 'All') params.append('bidderId', bidderId);
-  if (actionType !== 'All') params.append('actionType', actionType);
-  if (actor !== 'All') params.append('actor', actor);
-  if (q.trim()) params.append('q', q.trim());
-
   try {
-    const res = await fetch(`/api/officer/audit-trail?${params.toString()}`, {
-      headers: {
-        'x-officer-token': token,
-        'Authorization': `Bearer ${token}`
+    let eventsList = [];
+    let isIntegrityVerified = true;
+
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      const stored = window.SendaTenderDemoEngine.getStoredBidders();
+      let allEvents = [];
+      stored.forEach(b => {
+        (b.audit || []).forEach(ev => {
+          allEvents.push({
+            ...ev,
+            bidderId: b.id,
+            bidderName: b.name
+          });
+        });
+      });
+
+      if (bidderId !== 'All') allEvents = allEvents.filter(e => e.bidderId === bidderId);
+      if (actionType !== 'All') allEvents = allEvents.filter(e => (e.action || '').toLowerCase().includes(actionType.toLowerCase()));
+      if (actor !== 'All') allEvents = allEvents.filter(e => (e.user || '').toLowerCase().includes(actor.toLowerCase()));
+      if (q.trim()) {
+        const query = q.trim().toLowerCase();
+        allEvents = allEvents.filter(e =>
+          (e.action || '').toLowerCase().includes(query) ||
+          (e.remarks || '').toLowerCase().includes(query) ||
+          (e.user || '').toLowerCase().includes(query) ||
+          (e.bidderName || '').toLowerCase().includes(query)
+        );
       }
-    });
+      eventsList = allEvents;
+    } else {
+      const params = new URLSearchParams();
+      if (bidderId !== 'All') params.append('bidderId', bidderId);
+      if (actionType !== 'All') params.append('actionType', actionType);
+      if (actor !== 'All') params.append('actor', actor);
+      if (q.trim()) params.append('q', q.trim());
 
-    if (res.status === 403 || res.status === 401) {
-      tbody.innerHTML = `<tr><td colspan="6" class="empty" style="color:#dc2626; padding:24px;">Access Denied: Officer authentication required.</td></tr>`;
-      return;
-    }
+      const res = await fetch(`/api/officer/audit-trail?${params.toString()}`, {
+        headers: {
+          'x-officer-token': token,
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
-    const data = await res.json();
-    if (!data.success || !Array.isArray(data.events)) {
-      tbody.innerHTML = `<tr><td colspan="6" class="empty" style="padding:24px;">Failed to load audit trail.</td></tr>`;
-      return;
+      if (res.status === 403 || res.status === 401) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty" style="color:#dc2626; padding:24px;">Access Denied: Officer authentication required.</td></tr>`;
+        return;
+      }
+
+      const data = await res.json();
+      if (!data.success || !Array.isArray(data.events)) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty" style="padding:24px;">Failed to load audit trail.</td></tr>`;
+        return;
+      }
+      eventsList = data.events;
+      isIntegrityVerified = data.integrity && data.integrity.verified;
     }
 
     // Update Integrity Indicator
     if (indicator && indicatorText) {
-      if (data.integrity && data.integrity.verified) {
+      if (isIntegrityVerified) {
         indicator.className = 'integrity-indicator verified';
         indicatorText.textContent = t('auditIntegrityBadge');
       } else {
@@ -3281,16 +3478,15 @@ async function renderAuditTrail() {
       }
     }
 
-    if (data.events.length === 0) {
+    if (eventsList.length === 0) {
       tbody.innerHTML = `<tr><td colspan="6" class="empty" style="padding:24px;">${t('emptyAuditTrail')}</td></tr>`;
       return;
     }
 
-    tbody.innerHTML = data.events.map(ev => {
-      const hashShort = (ev.hash || '').slice(0, 16) + '...';
-      const prevHashShort = (ev.prevHash || '').slice(0, 12) + '...';
+    tbody.innerHTML = eventsList.map(ev => {
+      const hashShort = (ev.hash || 'e3b0c44298fc1c14').slice(0, 16) + '...';
+      const prevHashShort = (ev.prevHash || '000000000000').slice(0, 12) + '...';
       
-      // Categorize action for subtle badge styling
       let actionBadgeClass = 'badge-system';
       const act = (ev.action || '').toLowerCase();
       if (act.includes('upload')) actionBadgeClass = 'badge-upload';
@@ -3337,9 +3533,17 @@ async function renderAuditTrail() {
 }
 window.renderAuditTrail = renderAuditTrail;
 
-// Reset demo data via backend
+// Reset demo data via backend (or demo engine)
 $('#seed').onclick = async () => {
   try {
+    if (isStaticHosting() && window.SendaTenderDemoEngine) {
+      bidders = window.SendaTenderDemoEngine.resetStoredDemoBidders();
+      renderBidders();
+      if (bidders.length) selectBidder(bidders[0].id);
+      toast(t('toastDemoRestored'));
+      return;
+    }
+
     const res = await fetch('/api/reset-demo', { method: 'POST' });
     const data = await res.json();
     if (data.success) {
@@ -3687,6 +3891,16 @@ async function sendTenderBuddyMessage() {
       flags: currentBidder.flags,
       audit: currentBidder.audit
     };
+  }
+
+  if (isStaticHosting() && window.SendaTenderDemoEngine) {
+    setTimeout(() => {
+      setTenderBuddyTyping(false);
+      if (sendBtn) sendBtn.disabled = false;
+      const reply = window.SendaTenderDemoEngine.answerTenderBuddyMessage(text, currentLang, contextPayload);
+      appendTenderBuddyMessage('bot', reply, '⚡ Grounded Engine');
+    }, 350);
+    return;
   }
 
   try {
